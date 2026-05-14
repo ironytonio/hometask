@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Підприємець UA — Ігровий Портал</title>
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Unbounded:wght@300;400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #FFD700;
+  --blue: #0057B7;
+  --neon-yellow: #FFEC00;
+  --neon-blue: #00C3FF;
+  --dark: #0A0A0F;
+  --dark2: #12121A;
+  --dark3: #1A1A26;
+  --card: #16161F;
+  --border: rgba(255,215,0,0.2);
+  --text: #E8E8F0;
+  --muted: #6B6B8A;
+  --success: #00FF88;
+  --danger: #FF3355;
+  --font-display: 'Unbounded', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dark);
+  color: var(--text);
+  font-family: var(--font-display);
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ─── SCANLINE OVERLAY ─── */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  pointer-events:none; z-index:9999;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:var(--dark2); }
+::-webkit-scrollbar-thumb { background:var(--gold); border-radius:3px; }
+
+/* ─── HEADER ─── */
+.site-header {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  background: rgba(10,10,15,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  height: 64px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.logo {
+  font-size: 1.1rem; font-weight:900; letter-spacing:-0.02em;
+  background: linear-gradient(135deg, var(--gold), var(--neon-blue));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.logo span { color: var(--neon-yellow); -webkit-text-fill-color: var(--neon-yellow); }
+.score-bar {
+  display:flex; align-items:center; gap:1rem;
+  font-family: var(--font-mono); font-size:.75rem; color: var(--gold);
+}
+.score-val { font-size:1.1rem; font-weight:700; }
+.nav-links { display:flex; gap:1.5rem; }
+.nav-links a {
+  color: var(--muted); text-decoration:none; font-size:.7rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:.1em; transition:color .2s;
+}
+.nav-links a:hover { color: var(--gold); }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding: 6rem 2rem 4rem;
+  position:relative; overflow:hidden;
+  text-align:center;
+}
+.hero-bg {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,87,183,0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(255,215,0,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 20% 60%, rgba(0,195,255,0.08) 0%, transparent 60%);
+}
+.hero-grid {
+  position:absolute; inset:0;
+  background-image: linear-gradient(rgba(255,215,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,215,0,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridMove 20s linear infinite;
+}
+@keyframes gridMove { to { background-position: 60px 60px; } }
+
+.hero-badge {
+  display:inline-block; padding:.4rem 1rem; border:1px solid var(--gold);
+  color: var(--gold); font-size:.65rem; letter-spacing:.2em; text-transform:uppercase;
+  margin-bottom:2rem; position:relative;
+  animation: fadeDown .6s ease both;
+}
+.hero-title {
+  font-size: clamp(2.5rem, 8vw, 6rem); font-weight:900; line-height:1;
+  margin-bottom:1.5rem; position:relative;
+  animation: fadeDown .7s ease .1s both;
+}
+.hero-title .line1 { display:block; color: var(--neon-yellow); }
+.hero-title .line2 { display:block; color: #fff; }
+.hero-title .line3 { display:block; color: var(--neon-blue); font-size:60%; }
+
+.hero-sub {
+  font-size:.85rem; color:var(--muted); max-width:600px; line-height:1.8;
+  margin-bottom:3rem; font-family:var(--font-mono);
+  animation: fadeDown .8s ease .2s both;
+}
+.hero-cta {
+  display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+  animation: fadeDown .9s ease .3s both;
+}
+.btn {
+  padding:.9rem 2rem; border:none; cursor:pointer;
+  font-family:var(--font-display); font-weight:700; font-size:.8rem;
+  text-transform:uppercase; letter-spacing:.08em;
+  transition: all .2s; position:relative; overflow:hidden;
+  text-decoration:none; display:inline-flex; align-items:center; gap:.5rem;
+}
+.btn-primary {
+  background: var(--gold); color: var(--dark);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+.btn-primary:hover { background: var(--neon-yellow); transform:translateY(-2px); box-shadow:0 8px 30px rgba(255,215,0,0.4); }
+.btn-outline {
+  background: transparent; color: var(--gold); border: 1px solid var(--gold);
+}
+.btn-outline:hover { background: rgba(255,215,0,0.1); transform:translateY(-2px); }
+
+.hero-stats {
+  display:flex; gap:3rem; margin-top:4rem; position:relative;
+  animation: fadeDown 1s ease .4s both;
+}
+.hero-stat { text-align:center; }
+.hero-stat-num { font-size:2rem; font-weight:900; color:var(--gold); display:block; }
+.hero-stat-label { font-size:.6rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; font-family:var(--font-mono); }
+
+@keyframes fadeDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+
+/* ─── SECTIONS ─── */
+section { padding:5rem 2rem; max-width:1200px; margin:0 auto; }
+.section-label {
+  font-size:.65rem; color:var(--gold); text-transform:uppercase; letter-spacing:.2em;
+  font-family:var(--font-mono); margin-bottom:1rem;
+  display:flex; align-items:center; gap:.8rem;
+}
+.section-label::before { content:''; display:block; width:30px; height:1px; background:var(--gold); }
+.section-title { font-size:clamp(1.8rem,5vw,3rem); font-weight:900; line-height:1.1; margin-bottom:1rem; }
+.section-sub { color:var(--muted); font-family:var(--font-mono); font-size:.8rem; line-height:1.8; margin-bottom:3rem; }
+
+/* ─── GAME CARDS ─── */
+.games-grid {
+  display:grid; grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); gap:1.5rem;
+}
+.game-card {
+  background: var(--card); border:1px solid var(--border);
+  padding:2rem; position:relative; overflow:hidden; cursor:pointer;
+  transition: all .3s; group: true;
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+}
+.game-card::before {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(135deg, var(--accent, rgba(255,215,0,0.05)) 0%, transparent 60%);
+  opacity:0; transition:opacity .3s;
+}
+.game-card:hover { border-color: var(--accent, var(--gold)); transform:translateY(-4px); box-shadow:0 20px 40px rgba(0,0,0,0.4); }
+.game-card:hover::before { opacity:1; }
+.game-emoji { font-size:3rem; margin-bottom:1.5rem; display:block; }
+.game-num { position:absolute; top:1.5rem; right:1.5rem; font-size:4rem; font-weight:900; color:rgba(255,255,255,0.03); font-family:var(--font-mono); line-height:1; }
+.game-tag {
+  display:inline-block; padding:.3rem .8rem; font-size:.6rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:.1em; margin-bottom:1rem;
+  background: rgba(255,215,0,0.1); color:var(--gold); border:1px solid rgba(255,215,0,0.3);
+}
+.game-title { font-size:1.1rem; font-weight:900; margin-bottom:.8rem; }
+.game-desc { font-family:var(--font-mono); font-size:.75rem; color:var(--muted); line-height:1.7; margin-bottom:1.5rem; }
+.game-btn {
+  display:inline-flex; align-items:center; gap:.5rem;
+  color:var(--gold); font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em;
+  border:none; background:none; cursor:pointer; font-family:var(--font-display);
+  transition: gap .2s;
+}
+.game-card:hover .game-btn { gap:1rem; }
+
+/* ─── INFO BLOCKS ─── */
+.info-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.5rem; }
+.info-card {
+  background: var(--dark3); border:1px solid var(--border);
+  padding:1.5rem; position:relative;
+}
+.info-card-header { display:flex; align-items:center; gap:.8rem; margin-bottom:1.5rem; }
+.info-icon { width:40px; height:40px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; background:rgba(255,215,0,0.1); border:1px solid rgba(255,215,0,0.3); flex-shrink:0; }
+.info-card-title { font-size:.85rem; font-weight:700; }
+.info-item { display:flex; align-items:flex-start; gap:.6rem; margin-bottom:.8rem; font-size:.72rem; font-family:var(--font-mono); color:var(--muted); line-height:1.6; }
+.info-item::before { content:'▸'; color:var(--gold); flex-shrink:0; margin-top:.1rem; }
+.law-ref { color:var(--neon-blue); font-weight:700; }
+
+/* ─── LEADERBOARD ─── */
+.leaderboard { max-width:600px; margin:0 auto; }
+.lb-row {
+  display:flex; align-items:center; gap:1rem;
+  padding:1rem 1.5rem; margin-bottom:.5rem;
+  background:var(--card); border:1px solid var(--border); position:relative;
+}
+.lb-rank { font-size:1.2rem; font-weight:900; color:var(--muted); width:30px; text-align:center; }
+.lb-rank.gold { color:var(--gold); }
+.lb-rank.silver { color:#C0C0C0; }
+.lb-rank.bronze { color:#CD7F32; }
+.lb-name { flex:1; font-size:.8rem; font-weight:700; }
+.lb-score { font-family:var(--font-mono); font-size:.9rem; color:var(--gold); font-weight:700; }
+.lb-badge { font-size:.6rem; padding:.2rem .6rem; background:rgba(0,195,255,0.1); border:1px solid rgba(0,195,255,0.3); color:var(--neon-blue); }
+
+/* ─── MODALS / GAME OVERLAYS ─── */
+.overlay {
+  position:fixed; inset:0; z-index:500;
+  background: rgba(5,5,10,0.97);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:1rem;
+  opacity:0; pointer-events:none; transition:opacity .3s;
+}
+.overlay.active { opacity:1; pointer-events:all; }
+.overlay-inner {
+  width:100%; max-width:800px; max-height:90vh; overflow-y:auto;
+  background:var(--dark2); border:1px solid var(--border);
+  padding:2.5rem; position:relative;
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+}
+.overlay-close {
+  position:absolute; top:1rem; right:1rem;
+  background:none; border:none; color:var(--muted); cursor:pointer;
+  font-size:1.5rem; font-family:var(--font-mono); transition:color .2s;
+}
+.overlay-close:hover { color:var(--gold); }
+.overlay-title { font-size:1.5rem; font-weight:900; margin-bottom:.5rem; }
+.overlay-sub { font-family:var(--font-mono); font-size:.75rem; color:var(--muted); margin-bottom:2rem; }
+
+/* ─── QUIZ GAME ─── */
+.quiz-progress-bar { height:4px; background:var(--dark3); margin-bottom:2rem; border-radius:2px; }
+.quiz-progress-fill { height:100%; background:linear-gradient(90deg,var(--gold),var(--neon-blue)); border-radius:2px; transition:width .4s ease; }
+.quiz-question { font-size:1rem; font-weight:700; line-height:1.6; margin-bottom:2rem; }
+.quiz-answers { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; }
+.quiz-answer {
+  padding:1rem; border:1px solid var(--border); background:var(--dark3);
+  cursor:pointer; font-family:var(--font-mono); font-size:.75rem; line-height:1.5;
+  transition:all .2s; text-align:left; color:var(--text);
+  position:relative; overflow:hidden;
+}
+.quiz-answer:hover { border-color:var(--gold); background:rgba(255,215,0,0.08); }
+.quiz-answer.correct { border-color:var(--success)!important; background:rgba(0,255,136,0.12)!important; }
+.quiz-answer.wrong { border-color:var(--danger)!important; background:rgba(255,51,85,0.12)!important; }
+.quiz-answer.disabled { pointer-events:none; }
+.quiz-answer-letter {
+  display:inline-block; width:24px; height:24px; line-height:24px; text-align:center;
+  background:rgba(255,215,0,0.15); color:var(--gold); font-weight:700; font-size:.7rem;
+  margin-right:.6rem; margin-bottom:.3rem; flex-shrink:0;
+}
+.quiz-explain {
+  margin-top:1.5rem; padding:1rem; background:rgba(0,195,255,0.08); border:1px solid rgba(0,195,255,0.2);
+  font-family:var(--font-mono); font-size:.72rem; color:var(--neon-blue); line-height:1.7;
+  display:none;
+}
+.quiz-explain.show { display:block; }
+.quiz-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; font-family:var(--font-mono); font-size:.7rem; color:var(--muted); }
+.quiz-score-display { color:var(--gold); font-weight:700; }
+.hint-row { display:flex; gap:.8rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+.hint-btn {
+  padding:.5rem 1rem; background:rgba(255,215,0,0.08); border:1px solid rgba(255,215,0,0.3);
+  color:var(--gold); font-size:.65rem; font-weight:700; cursor:pointer;
+  font-family:var(--font-display); transition:all .2s; text-transform:uppercase; letter-spacing:.05em;
+}
+.hint-btn:hover { background:rgba(255,215,0,0.15); }
+.hint-btn:disabled { opacity:.3; pointer-events:none; }
+
+/* ─── PACMAN GAME ─── */
+#pacman-canvas { display:block; margin:0 auto; border:1px solid var(--border); background:#000; max-width:100%; }
+.pacman-controls {
+  display:grid; grid-template-columns:repeat(3,60px); gap:.5rem; margin:1.5rem auto 0; width:fit-content;
+}
+.pac-btn {
+  width:60px; height:60px; background:var(--dark3); border:1px solid var(--border);
+  color:var(--text); font-size:1.2rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all .2s; font-family:var(--font-mono);
+}
+.pac-btn:hover, .pac-btn:active { background:rgba(255,215,0,0.15); border-color:var(--gold); color:var(--gold); }
+.pac-btn.empty { background:none; border:none; cursor:default; }
+.game-hud { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; font-family:var(--font-mono); font-size:.8rem; }
+.game-hud span { color:var(--gold); font-weight:700; }
+
+/* ─── TETRIS GAME ─── */
+.tetris-wrap { display:flex; gap:2rem; align-items:flex-start; flex-wrap:wrap; justify-content:center; }
+#tetris-canvas { border:1px solid var(--border); display:block; }
+.tetris-side { min-width:180px; }
+.tetris-panel { background:var(--dark3); border:1px solid var(--border); padding:1rem; margin-bottom:1rem; font-family:var(--font-mono); font-size:.75rem; }
+.tetris-panel h4 { color:var(--gold); margin-bottom:.8rem; font-size:.7rem; text-transform:uppercase; letter-spacing:.1em; }
+#next-canvas { display:block; margin:0 auto; }
+.tax-info { font-size:.65rem; color:var(--muted); line-height:1.6; }
+.tax-info span { color:var(--neon-blue); }
+
+/* ─── CONTRACT PUZZLE ─── */
+.contract-wrap { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+.contract-pool { min-height:200px; background:var(--dark3); border:2px dashed var(--border); padding:1rem; }
+.contract-pool h4 { font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; margin-bottom:1rem; font-family:var(--font-mono); }
+.contract-slots { min-height:300px; background:var(--dark3); border:2px dashed var(--border); padding:1rem; }
+.clause-chip {
+  display:inline-flex; padding:.5rem .8rem; margin:.3rem; font-size:.65rem; font-family:var(--font-mono);
+  border:1px solid var(--border); cursor:grab; background:var(--card);
+  transition:all .2s; user-select:none; line-height:1.4;
+}
+.clause-chip:hover { border-color:var(--gold); color:var(--gold); }
+.clause-chip.placed { border-color:var(--success); color:var(--success); cursor:default; background:rgba(0,255,136,0.05); }
+.clause-chip.wrong-place { border-color:var(--danger); color:var(--danger); animation:shake .3s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+.slot-item {
+  padding:.6rem 1rem; margin:.3rem 0; background:var(--dark); border:1px dashed rgba(255,215,0,0.2);
+  font-size:.65rem; font-family:var(--font-mono); color:var(--muted); cursor:pointer; transition:all .2s;
+  min-height:40px; display:flex; align-items:center;
+}
+.slot-item.filled { border-color:var(--success); color:var(--success); background:rgba(0,255,136,0.05); }
+.slot-item.error { border-color:var(--danger); color:var(--danger); animation:shake .3s; }
+.slot-num { color:var(--gold); font-weight:700; margin-right:.5rem; font-size:.8rem; }
+
+/* ─── RESULT SCREEN ─── */
+.result-screen { text-align:center; padding:2rem 0; }
+.result-emoji { font-size:5rem; margin-bottom:1rem; display:block; }
+.result-score { font-size:3rem; font-weight:900; color:var(--gold); margin-bottom:.5rem; }
+.result-title { font-size:1.5rem; font-weight:900; margin-bottom:1rem; }
+.result-desc { font-family:var(--font-mono); font-size:.8rem; color:var(--muted); line-height:1.8; max-width:400px; margin:0 auto 2rem; }
+.result-actions { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+
+/* ─── CALC ─── */
+.calc-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+.calc-input-group { margin-bottom:1.5rem; }
+.calc-label { font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; font-family:var(--font-mono); margin-bottom:.5rem; display:block; }
+.calc-select, .calc-input {
+  width:100%; padding:.8rem 1rem; background:var(--dark3); border:1px solid var(--border);
+  color:var(--text); font-family:var(--font-mono); font-size:.8rem;
+  outline:none; transition:border-color .2s;
+}
+.calc-select:focus, .calc-input:focus { border-color:var(--gold); }
+.calc-result { background:var(--dark3); border:1px solid rgba(0,195,255,0.3); padding:1.5rem; }
+.calc-result h4 { color:var(--neon-blue); font-size:.7rem; text-transform:uppercase; letter-spacing:.1em; margin-bottom:1rem; font-family:var(--font-mono); }
+.calc-line { display:flex; justify-content:space-between; margin-bottom:.6rem; font-size:.75rem; font-family:var(--font-mono); }
+.calc-line span:last-child { color:var(--gold); font-weight:700; }
+.calc-total { border-top:1px solid var(--border); padding-top:.8rem; margin-top:.8rem; font-size:.9rem; font-weight:700; }
+.calc-total span:last-child { color:var(--neon-yellow); }
+
+/* ─── TIMELINE ─── */
+.timeline { position:relative; padding-left:2rem; }
+.timeline::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, var(--gold), var(--neon-blue)); }
+.timeline-item { position:relative; padding-bottom:2rem; padding-left:1.5rem; }
+.timeline-dot {
+  position:absolute; left:-2.5rem; top:.2rem;
+  width:14px; height:14px; border-radius:50%; background:var(--gold);
+  border:2px solid var(--dark); box-shadow:0 0 12px rgba(255,215,0,0.6);
+}
+.timeline-time { font-size:.65rem; color:var(--gold); font-family:var(--font-mono); margin-bottom:.3rem; }
+.timeline-title { font-size:.85rem; font-weight:700; margin-bottom:.3rem; }
+.timeline-desc { font-size:.7rem; color:var(--muted); font-family:var(--font-mono); line-height:1.6; }
+
+/* ─── FOOTER ─── */
+footer {
+  background:var(--dark2); border-top:1px solid var(--border);
+  padding:2rem; text-align:center;
+  font-family:var(--font-mono); font-size:.7rem; color:var(--muted);
+}
+footer a { color:var(--gold); text-decoration:none; }
+
+/* ─── TOAST ─── */
+.toast {
+  position:fixed; bottom:2rem; right:2rem; z-index:1000;
+  padding:1rem 1.5rem; background:var(--card); border:1px solid var(--border);
+  font-family:var(--font-mono); font-size:.75rem; max-width:300px;
+  transform:translateX(120%); transition:transform .3s ease;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+.toast.show { transform:translateX(0); }
+.toast-title { color:var(--gold); font-weight:700; margin-bottom:.3rem; }
+
+/* ─── ACHIEVEMENT ─── */
+.achievement-popup {
+  position:fixed; top:5rem; right:2rem; z-index:600;
+  background:var(--card); border:1px solid var(--gold);
+  padding:1rem 1.5rem; display:flex; align-items:center; gap:1rem;
+  transform:translateX(120%); transition:transform .4s ease;
+  box-shadow:0 0 30px rgba(255,215,0,0.2);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+.achievement-popup.show { transform:translateX(0); }
+.ach-icon { font-size:2rem; }
+.ach-text { font-size:.65rem; font-family:var(--font-mono); }
+.ach-title { color:var(--gold); font-weight:700; font-size:.8rem; margin-bottom:.2rem; }
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:768px) {
+  .site-header { padding:0 1rem; }
+  .nav-links { display:none; }
+  .hero-stats { gap:1.5rem; }
+  .hero-stat-num { font-size:1.5rem; }
+  .quiz-answers { grid-template-columns:1fr; }
+  .contract-wrap { grid-template-columns:1fr; }
+  .calc-grid { grid-template-columns:1fr; }
+  .tetris-wrap { flex-direction:column; align-items:center; }
+  .overlay-inner { padding:1.5rem; }
+  section { padding:3rem 1rem; }
+  .pacman-controls { grid-template-columns:repeat(3,50px); }
+  .pac-btn { width:50px; height:50px; }
+}
+
+/* ─── GLITCH ─── */
+.glitch { position:relative; }
+.glitch::before, .glitch::after {
+  content:attr(data-text); position:absolute; top:0; left:0; right:0;
+}
+.glitch::before { color:var(--neon-blue); animation:glitch1 3s infinite; clip-path:polygon(0 0,100% 0,100% 35%,0 35%); }
+.glitch::after { color:var(--danger); animation:glitch2 3s infinite; clip-path:polygon(0 65%,100% 65%,100% 100%,0 100%); }
+@keyframes glitch1 { 0%,90%,100%{transform:none} 92%{transform:translate(-2px,1px)} 94%{transform:translate(2px,-1px)} }
+@keyframes glitch2 { 0%,90%,100%{transform:none} 93%{transform:translate(2px,2px)} 95%{transform:translate(-2px,-2px)} }
+
+/* scrollable section wrapper */
+.full-section { padding:5rem 0; }
+.inner { max-width:1200px; margin:0 auto; padding:0 2rem; }
+
+/* tabs */
+.tabs { display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:2rem; overflow-x:auto; }
+.tab-btn {
+  padding:.8rem 1.5rem; background:none; border:none; color:var(--muted);
+  font-family:var(--font-display); font-size:.7rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:.08em; cursor:pointer; transition:all .2s; white-space:nowrap;
+  border-bottom:2px solid transparent;
+}
+.tab-btn.active { color:var(--gold); border-bottom-color:var(--gold); }
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="logo">⚖️ Підприємець<span>UA</span></div>
+  <nav class="nav-links">
+    <a href="#games">Ігри</a>
+    <a href="#laws">Законодавство</a>
+    <a href="#calc">Калькулятор</a>
+    <a href="#register">Реєстрація</a>
+    <a href="#leaders">Рейтинг</a>
+  </nav>
+  <div class="score-bar">
+    <span>⭐ XP:</span>
+    <span class="score-val" id="total-xp">0</span>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-badge">🇺🇦 Господарське право України — Ігровий Портал</div>
+  <h1 class="hero-title">
+    <span class="line1 glitch" data-text="ПІДПРИЄМЕЦЬ">ПІДПРИЄМЕЦЬ</span>
+    <span class="line2">UA</span>
+    <span class="line3">// learn · play · succeed</span>
+  </h1>
+  <p class="hero-sub">
+    Навчайся господарському праву через міні-ігри.<br>
+    Від реєстрації ФОП до господарського суду — весело та з нормативною базою.
+  </p>
+  <div class="hero-cta">
+    <a href="#games" class="btn btn-primary">🎮 Почати гру</a>
+    <a href="#laws" class="btn btn-outline">📚 Законодавство</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><span class="hero-stat-num">5</span><span class="hero-stat-label">Міні-ігор</span></div>
+    <div class="hero-stat"><span class="hero-stat-num">50+</span><span class="hero-stat-label">Питань</span></div>
+    <div class="hero-stat"><span class="hero-stat-num">3</span><span class="hero-stat-label">Кодекси</span></div>
+    <div class="hero-stat"><span class="hero-stat-num">∞</span><span class="hero-stat-label">Спроб</span></div>
+  </div>
+</div>
+
+<!-- GAMES SECTION -->
+<div class="full-section" id="games">
+<div class="inner">
+  <div class="section-label">// Ігровий центр</div>
+  <h2 class="section-title">Обери свою гру</h2>
+  <p class="section-sub">П'ять міні-ігор — п'ять аспектів господарського права. Грай, навчайся, отримуй XP.</p>
+
+  <div class="games-grid">
+    <div class="game-card" style="--accent:rgba(255,215,0,0.15)" onclick="openGame('quiz')">
+      <span class="game-num">01</span>
+      <span class="game-emoji">🎯</span>
+      <div class="game-tag">Вікторина</div>
+      <h3 class="game-title">Хто хоче стати підприємцем?</h3>
+      <p class="game-desc">15 питань по господарському праву. Реєстрація, податки, ліцензії, договори. Підказки — як у телешоу!</p>
+      <button class="game-btn">Грати →</button>
+    </div>
+
+    <div class="game-card" style="--accent:rgba(0,195,255,0.1)" onclick="openGame('pacman')">
+      <span class="game-num">02</span>
+      <span class="game-emoji">👾</span>
+      <div class="game-tag" style="background:rgba(0,195,255,0.1);color:var(--neon-blue);border-color:rgba(0,195,255,0.3)">Аркада</div>
+      <h3 class="game-title">Хто не хоче стати корупціонером?</h3>
+      <p class="game-desc">Pac-Man де хабарі женуться за тобою! Збирай документи, тікай від грошей, їж НАБУ-таблетки!</p>
+      <button class="game-btn" style="color:var(--neon-blue)">Грати →</button>
+    </div>
+
+    <div class="game-card" style="--accent:rgba(255,51,85,0.1)" onclick="openGame('tetris')">
+      <span class="game-num">03</span>
+      <span class="game-emoji">📊</span>
+      <div class="game-tag" style="background:rgba(255,51,85,0.1);color:var(--danger);border-color:rgba(255,51,85,0.3)">Тетріс</div>
+      <h3 class="game-title">Податковий Тетріс</h3>
+      <p class="game-desc">Блоки — це податки (ПДВ, ЄСВ, ПДФО). Склади правильну декларацію або отримай штраф!</p>
+      <button class="game-btn" style="color:var(--danger)">Грати →</button>
+    </div>
+
+    <div class="game-card" style="--accent:rgba(0,255,136,0.1)" onclick="openGame('contract')">
+      <span class="game-num">04</span>
+      <span class="game-emoji">📝</span>
+      <div class="game-tag" style="background:rgba(0,255,136,0.1);color:var(--success);border-color:rgba(0,255,136,0.3)">Пазл</div>
+      <h3 class="game-title">Contracto — Склади договір</h3>
+      <p class="game-desc">Складай господарський договір з блоків. Знаходь помилки в контракті. Хто уважніший?</p>
+      <button class="game-btn" style="color:var(--success)">Грати →</button>
+    </div>
+
+    <div class="game-card" style="--accent:rgba(255,165,0,0.1)" onclick="openGame('calc')">
+      <span class="game-num">05</span>
+      <span class="game-emoji">🧮</span>
+      <div class="game-tag" style="background:rgba(255,165,0,0.1);color:orange;border-color:rgba(255,165,0,0.3)">Калькулятор</div>
+      <h3 class="game-title">Податковий Калькулятор ФОП</h3>
+      <p class="game-desc">Інтерактивний розрахунок податків для кожної групи ФОП. Обери свою систему оподаткування!</p>
+      <button class="game-btn" style="color:orange">Рахувати →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- LAWS SECTION -->
+<div class="full-section" id="laws" style="background:var(--dark2);">
+<div class="inner">
+  <div class="section-label">// Нормативна база</div>
+  <h2 class="section-title">Чинне законодавство</h2>
+  <p class="section-sub">Ключові норми господарського права України — стисло та зрозуміло.</p>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('reg')">🏢 Реєстрація</button>
+    <button class="tab-btn" onclick="switchTab('tax')">💰 Оподаткування</button>
+    <button class="tab-btn" onclick="switchTab('contract')">📝 Договори</button>
+    <button class="tab-btn" onclick="switchTab('court')">⚖️ Суд</button>
+    <button class="tab-btn" onclick="switchTab('anti')">🛡️ Антикорупція</button>
+  </div>
+
+  <div id="tab-reg" class="tab-panel active">
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-icon">🏪</div><div class="info-card-title">Реєстрація ФОП</div></div>
+        <div class="info-item">Заява подається через ЦНАПи, нотаріусів або онлайн — <span class="law-ref">ЗУ "Про держреєстрацію"</span></div>
+        <div class="info-item">Строк реєстрації — <b>1 робочий день</b> (безоплатно)</div>
+        <div class="info-item">ФОП — фізична особа, яка зареєстрована як підприємець без створення юридичної особи</div>
+        <div class="info-item">Три групи єдиного податку: 1 гр — до 167 МЗП, 2 гр — до 834 МЗП, 3 гр — до 1167 МЗП річного доходу</div>
+        <div class="info-item">Документи: паспорт, ІПН, заява — більше нічого не потрібно</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-icon">🏛️</div><div class="info-card-title">Реєстрація ТОВ</div></div>
+        <div class="info-item"><span class="law-ref">ЗУ "Про товариства з обмеженою відповідальністю"</span> (2018)</div>
+        <div class="info-item">Мінімальний статутний капітал — не встановлено (може бути 1 грн)</div>
+        <div class="info-item">Засновники несуть ризик лише в межах свого вкладу</div>
+        <div class="info-item">Вищий орган — загальні збори учасників</div>
+        <div class="info-item">Реєстрація через держреєстратора — 1 день, статут можна укласти онлайн</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-icon">📋</div><div class="info-card-title">Ліцензування</div></div>
+        <div class="info-item"><span class="law-ref">ЗУ "Про ліцензування видів господарської діяльності"</span> 2015</div>
+        <div class="info-item">Понад 30 видів діяльності підлягають ліцензуванню (медицина, освіта, будівництво тощо)</div>
+        <div class="info-item">Строк видачі ліцензії — 10 робочих днів</div>
+        <div class="info-item">Ліцензія видається безстроково (з 2015 р.) — скасування строкових ліцензій</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-tax" class="tab-panel">
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-icon">1️⃣</div><div class="info-card-title">1 Група ФОП</div></div>
+        <div class="info-item">Дохід — до <b>167 МЗП</b> на рік (~1 млн грн)</div>
+        <div class="info-item">Ставка єдиного податку — до <b>10% прожиткового мінімуму</b> на місяць</div>
+        <div class="info-item">ЄСВ — <b>22% від МЗП</b> щомісяця</div>
+        <div class="info-item">Без найманих працівників, лише роздрібна торгівля на ринках</div>
+        <div class="info-item"><span class="law-ref">ПКУ ст. 291-295</span></div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-icon">2️⃣</div><div class="info-card-title">2 Група ФОП</div></div>
+        <div class="info-item">Дохід — до <b>834 МЗП</b> на рік (~5 млн грн)</div>
+        <div class="info-item">Ставка — до <b>20% МЗП</b> на місяць</div>
+        <div class="info-item">До <b>10 найманих працівників</b></div>
+        <div class="info-item">Послуги лише фізособам та платникам єдиного податку</div>
+        <div class="info-item">ЄСВ — <b>22% від МЗП</b></div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-icon">3️⃣</div><div class="info-card-title">3 Група ФОП</div></div>
+        <div class="info-item">Дохід — до <b>1167 МЗП</b> на рік (~7 млн грн)</div>
+        <div class="info-item">Ставка: <b>3%</b> (з ПДВ) або <b>5%</b> (без ПДВ) від доходу</div>
+        <div class="info-item">Без обмежень по найманих працівниках</div>
+        <div class="info-item">Квартальна звітність</div>
+        <div class="info-item"><span class="law-ref">ПКУ ст. 293</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-contract" class="tab-panel">
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-icon">🤝</div><div class="info-card-title">Господарський договір</div></div>
+        <div class="info-item"><span class="law-ref">ГКУ ст. 180-188</span> — основні вимоги</div>
+        <div class="info-item">Обов'язкові умови: предмет, ціна, строк виконання</div>
+        <div class="info-item">Укладається у письмовій формі — підписи сторін або ЕЦП</div>
+        <div class="info-item">Переддоговірні спори вирішуються у господарському суді протягом 20 днів</div>
+        <div class="info-item">Зміна/розірвання — за згодою сторін або в судовому порядку</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-icon">⚠️</div><div class="info-card-title">Відповідальність</div></div>
+        <div class="info-item"><span class="law-ref">ГКУ ст. 216-229</span> — господарські санкції</div>
+        <div class="info-item">Штрафні санкції: штраф (фіксований), пеня (% від суми боргу)</div>
+        <div class="info-item">Відшкодування збитків — реальний збиток + упущена вигода</div>
+        <div class="info-item">Строк позовної давності — <b>3 роки</b> (загальний)</div>
+        <div class="info-item">Форс-мажор звільняє від відповідальності — <span class="law-ref">ГКУ ст. 218</span></div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-icon">📦</div><div class="info-card-title">Поставка та підряд</div></div>
+        <div class="info-item">Договір поставки — <span class="law-ref">ГКУ ст. 265</span>, товари для підприємницьких цілей</div>
+        <div class="info-item">Господарський підряд — <span class="law-ref">ГКУ ст. 317</span></div>
+        <div class="info-item">Гарантійний строк для підрядних робіт — мінімум 1 рік</div>
+        <div class="info-item">Акт виконаних робіт — обов'язковий документ для оплати</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-court" class="tab-panel">
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-icon">⚖️</div><div class="info-card-title">Господарський суд</div></div>
+        <div class="info-item"><span class="law-ref">ГПК України</span> — процесуальний кодекс</div>
+        <div class="info-item">Підсудність — господарські суди обласних центрів</div>
+        <div class="info-item">Позовна давність — <b>3 роки</b> (ЦКУ ст. 257)</div>
+        <div class="info-item">Розгляд справи — до <b>60 днів</b> у першій інстанції</div>
+        <div class="info-item">Електронна подача документів через ЄСІТС</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-icon">💸</div><div class="info-card-title">Судовий збір</div></div>
+        <div class="info-item"><span class="law-ref">ЗУ "Про судовий збір"</span></div>
+        <div class="info-item">Майнові позови — <b>1.5%</b> ціни позову (мін. 1 прожитковий мінімум)</div>
+        <div class="info-item">Немайнові вимоги — <b>1</b> прожитковий мінімум</div>
+        <div class="info-item">Апеляційна скарга — <b>150%</b> від першої інстанції</div>
+        <div class="info-item">Касація — <b>200%</b> від першої інстанції</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-icon">🔄</div><div class="info-card-title">Банкрутство</div></div>
+        <div class="info-item"><span class="law-ref">КУзПБ — Кодекс України з процедур банкрутства</span> (2019)</div>
+        <div class="info-item">Неплатоспроможність — нездатність погасити борги понад 300 МЗП</div>
+        <div class="info-item">Процедури: розпорядження майном → санація → ліквідація</div>
+        <div class="info-item">Мораторій на задоволення вимог кредиторів — з відкриттям провадження</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-anti" class="tab-panel">
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-icon">🚫</div><div class="info-card-title">Антикорупційне законодавство</div></div>
+        <div class="info-item"><span class="law-ref">ЗУ "Про запобігання корупції"</span> 2014 (зі змінами)</div>
+        <div class="info-item">Хабарництво — ст. 368 ККУ, до 12 років позбавлення волі</div>
+        <div class="info-item">Незаконне збагачення — ст. 368-5 ККУ</div>
+        <div class="info-item">Обов'язкове декларування для держслужбовців — через НАЗК</div>
+        <div class="info-item">Захист викривачів корупції — <span class="law-ref">ЗУ "Про захист викривачів"</span></div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-icon">🏛️</div><div class="info-card-title">НАБУ та НАЗК</div></div>
+        <div class="info-item">НАБУ — Національне антикорупційне бюро (розслідування)</div>
+        <div class="info-item">НАЗК — Нацагентство з питань запобігання корупції (превенція)</div>
+        <div class="info-item">САП — Спеціалізована антикорупційна прокуратура (обвинувачення)</div>
+        <div class="info-item">ВАКС — Вищий антикорупційний суд (розгляд справ)</div>
+        <div class="info-item">Гаряча лінія НАБУ: 0 800 501 840</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-header"><div class="info-icon">✅</div><div class="info-card-title">Чеклист бізнесу</div></div>
+        <div class="info-item">✓ Не давай і не обіцяй хабарів чиновникам</div>
+        <div class="info-item">✓ Фіксуй факти вимагання — запис, скарга до НАБУ</div>
+        <div class="info-item">✓ Перевіряй контрагентів через YouControl/OpenData</div>
+        <div class="info-item">✓ Усі платежі — виключно безготівкою</div>
+        <div class="info-item">✓ Зберігай всі первинні документи 3+ роки</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- REGISTRATION TIMELINE -->
+<div class="full-section" id="register">
+<div class="inner">
+  <div class="section-label">// Покроковий гайд</div>
+  <h2 class="section-title">Як відкрити ФОП?</h2>
+  <p class="section-sub">Від ідеї до офіційного підприємця — всього 5 кроків.</p>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-time">День 0 — Підготовка</div>
+      <div class="timeline-title">Обери КВЕД (вид діяльності)</div>
+      <div class="timeline-desc">Класифікатор видів економічної діяльності ДК 009:2010. Обери основний та до 10 додаткових КВЕД. Від КВЕД залежить група ЄП та необхідність ліцензій.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-time">День 1 — Подача заяви</div>
+      <div class="timeline-title">Зареєструйся онлайн або через ЦНАП</div>
+      <div class="timeline-desc">Онлайн: портал ДІЯ (diia.gov.ua) або igov.gov.ua — потрібен ЕЦП/BankID. Офлайн: ЦНАП або нотаріус. Документи: паспорт + ІПН + заява Ф1.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-time">День 1 (того ж дня!)</div>
+      <div class="timeline-title">Отримай виписку з ЄДР</div>
+      <div class="timeline-desc">Реєстрація займає 1 робочий день. Виписка з Єдиного державного реєстру — підтвердження статусу ФОП. Безкоштовно через Дія або ЄДР онлайн.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-time">День 2-5</div>
+      <div class="timeline-title">Обери систему оподаткування</div>
+      <div class="timeline-desc">Протягом 10 днів подай заяву про обрання групи єдиного податку або залишишся на загальній системі. Рахунок ФОП відкрий у будь-якому банку (необов'язково, але рекомендовано).</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-time">День 5+</div>
+      <div class="timeline-title">Старт бізнесу!</div>
+      <div class="timeline-desc">Ти офіційний підприємець! Не забувай: щоквартальна/щорічна звітність, сплата ЄСВ (навіть без доходу!), ведення обліку доходів у Книзі обліку.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- CALC SECTION -->
+<div class="full-section" id="calc" style="background:var(--dark2)">
+<div class="inner">
+  <div class="section-label">// Інтерактивний інструмент</div>
+  <h2 class="section-title">Калькулятор ФОП</h2>
+  <p class="section-sub">Розрахуй свої податки залежно від групи єдиного податку.</p>
+  <div class="calc-grid">
+    <div>
+      <div class="calc-input-group">
+        <label class="calc-label">Група ФОП</label>
+        <select class="calc-select" id="fop-group" onchange="calcTaxes()">
+          <option value="1">1 група — роздрібна торгівля на ринку</option>
+          <option value="2">2 група — послуги, виробництво</option>
+          <option value="3" selected>3 група — будь-яка діяльність</option>
+        </select>
+      </div>
+      <div class="calc-input-group">
+        <label class="calc-label">Щомісячний дохід (грн)</label>
+        <input type="number" class="calc-input" id="monthly-income" value="50000" oninput="calcTaxes()" min="0">
+      </div>
+      <div class="calc-input-group">
+        <label class="calc-label">Мінімальна зарплата (МЗП, грн)</label>
+        <input type="number" class="calc-input" id="min-wage" value="8000" oninput="calcTaxes()" min="0">
+      </div>
+      <div class="calc-input-group">
+        <label class="calc-label">Прожитковий мінімум (грн)</label>
+        <input type="number" class="calc-input" id="subsist" value="3028" oninput="calcTaxes()" min="0">
+      </div>
+    </div>
+    <div class="calc-result">
+      <h4>📊 Результат розрахунку</h4>
+      <div id="calc-output">
+        <div class="calc-line"><span>Єдиний податок:</span><span id="c-ep">—</span></div>
+        <div class="calc-line"><span>ЄСВ:</span><span id="c-esv">—</span></div>
+        <div class="calc-line"><span>ПДФО:</span><span id="c-pdfo">—</span></div>
+        <div class="calc-line"><span>Військовий збір:</span><span id="c-vz">—</span></div>
+        <div class="calc-line calc-total"><span>💰 Разом на руки:</span><span id="c-net">—</span></div>
+        <div class="calc-line calc-total" style="font-size:.75rem"><span>Загальна сума податків:</span><span id="c-total">—</span></div>
+        <div class="calc-line" style="margin-top:.8rem;font-size:.65rem"><span style="color:var(--muted)">Ефективна ставка:</span><span id="c-rate" style="color:var(--neon-blue)">—</span></div>
+      </div>
+      <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.65rem;color:var(--muted);font-family:var(--font-mono);line-height:1.7">
+        ⚠️ Розрахунок орієнтовний. Актуальні ставки перевіряй на <a href="https://tax.gov.ua" target="_blank" style="color:var(--gold)">tax.gov.ua</a>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="full-section" id="leaders">
+<div class="inner">
+  <div class="section-label">// Рейтинг</div>
+  <h2 class="section-title">Таблиця лідерів</h2>
+  <p class="section-sub">Хто найкращий підприємець групи?</p>
+  <div class="leaderboard" id="leaderboard">
+    <!-- filled by JS -->
+  </div>
+  <div style="text-align:center;margin-top:2rem">
+    <button class="btn btn-primary" onclick="addToLeaderboard()">🏆 Додати свій результат</button>
+  </div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div style="margin-bottom:1rem;font-size:1.2rem">⚖️ Підприємець UA</div>
+  <p>Освітній проект з господарського права України</p>
+  <p style="margin-top:.5rem">Нормативна база: <a href="#">ГКУ</a> · <a href="#">ПКУ</a> · <a href="#">ЦКУ</a> · <a href="#">ГПК</a> · <a href="#">КУзПБ</a></p>
+  <p style="margin-top:1rem;font-size:.6rem;opacity:.5">* Інформація носить виключно освітній характер і не є юридичною консультацією</p>
+</footer>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- QUIZ OVERLAY -->
+<!-- ══════════════════════════════════════════ -->
+<div class="overlay" id="quiz-overlay">
+<div class="overlay-inner">
+  <button class="overlay-close" onclick="closeGame('quiz')">✕</button>
+  <div id="quiz-container">
+    <div class="quiz-meta">
+      <span id="quiz-q-num">Питання 1/15</span>
+      <span class="quiz-score-display">⭐ <span id="quiz-score">0</span> XP</span>
+    </div>
+    <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-progress" style="width:0%"></div></div>
+    <div class="hint-row">
+      <button class="hint-btn" id="hint-5050" onclick="useHint('5050')">📞 50/50</button>
+      <button class="hint-btn" id="hint-law" onclick="useHint('law')">📚 Норма закону</button>
+      <button class="hint-btn" id="hint-skip" onclick="useHint('skip')">⏭️ Пропустити</button>
+    </div>
+    <div class="quiz-question" id="quiz-question"></div>
+    <div class="quiz-answers" id="quiz-answers"></div>
+    <div class="quiz-explain" id="quiz-explain"></div>
+    <div style="text-align:right;margin-top:1.5rem">
+      <button class="btn btn-primary" id="quiz-next" onclick="nextQuestion()" style="display:none">Далі →</button>
+    </div>
+  </div>
+  <div id="quiz-result" style="display:none"></div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- PACMAN OVERLAY -->
+<!-- ══════════════════════════════════════════ -->
+<div class="overlay" id="pacman-overlay">
+<div class="overlay-inner" style="max-width:600px">
+  <button class="overlay-close" onclick="closeGame('pacman')">✕</button>
+  <div class="overlay-title">👾 Хто не хоче стати корупціонером?</div>
+  <div class="overlay-sub">Збирай 📄 документи. Тікай від 💰 хабарів. Їж 🔵 НАБУ-таблетки щоб ловити корупціонерів!</div>
+  <div class="game-hud">
+    <span>Рахунок: <span id="pac-score">0</span></span>
+    <span>Рівень: <span id="pac-level">1</span></span>
+    <span>Життя: <span id="pac-lives">❤️❤️❤️</span></span>
+  </div>
+  <canvas id="pacman-canvas" width="480" height="360"></canvas>
+  <div class="pacman-controls">
+    <div class="pac-btn empty"></div>
+    <button class="pac-btn" id="btn-up" ontouchstart="pacDir(0,-1)" onclick="pacDir(0,-1)">▲</button>
+    <div class="pac-btn empty"></div>
+    <button class="pac-btn" id="btn-left" ontouchstart="pacDir(-1,0)" onclick="pacDir(-1,0)">◀</button>
+    <button class="pac-btn" onclick="togglePause()" id="btn-pause">⏸</button>
+    <button class="pac-btn" id="btn-right" ontouchstart="pacDir(1,0)" onclick="pacDir(1,0)">▶</button>
+    <div class="pac-btn empty"></div>
+    <button class="pac-btn" id="btn-down" ontouchstart="pacDir(0,1)" onclick="pacDir(0,1)">▼</button>
+    <div class="pac-btn empty"></div>
+  </div>
+  <p style="text-align:center;font-family:var(--font-mono);font-size:.65rem;color:var(--muted);margin-top:1rem">Клавіші ↑↓←→ або WASD на комп'ютері</p>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TETRIS OVERLAY -->
+<!-- ══════════════════════════════════════════ -->
+<div class="overlay" id="tetris-overlay">
+<div class="overlay-inner">
+  <button class="overlay-close" onclick="closeGame('tetris')">✕</button>
+  <div class="overlay-title">📊 Податковий Тетріс</div>
+  <div class="overlay-sub">Склади рядки з податків! Стрілки — рух, ↑ — поворот, Пробіл — швидко вниз</div>
+  <div class="tetris-wrap">
+    <canvas id="tetris-canvas" width="240" height="480"></canvas>
+    <div class="tetris-side">
+      <div class="tetris-panel">
+        <h4>Наступний блок</h4>
+        <canvas id="next-canvas" width="120" height="120"></canvas>
+      </div>
+      <div class="tetris-panel">
+        <h4>Рахунок</h4>
+        <div style="font-size:1.5rem;font-weight:900;color:var(--gold)" id="tet-score">0</div>
+        <div style="margin-top:.5rem;font-size:.7rem;color:var(--muted)">Рівень: <span id="tet-level" style="color:var(--neon-blue)">1</span></div>
+        <div style="font-size:.7rem;color:var(--muted)">Рядки: <span id="tet-lines" style="color:var(--neon-blue)">0</span></div>
+      </div>
+      <div class="tetris-panel">
+        <h4>Податки-блоки</h4>
+        <div class="tax-info">
+          <div>🟨 <span>ПДВ</span> — 20% від обороту</div>
+          <div>🟦 <span>ЄСВ</span> — 22% від МЗП</div>
+          <div>🟥 <span>ПДФО</span> — 18% від доходу</div>
+          <div>🟩 <span>ЄП</span> — Єдиний податок</div>
+          <div>🟪 <span>ВЗ</span> — Військовий збір 5%</div>
+          <div>🟧 <span>ПнМ</span> — Податок на прибуток 18%</div>
+          <div>⬜ <span>АЗ</span> — Акцизний збір</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="tetrisStart()" style="font-size:.65rem;padding:.6rem 1rem">▶ Старт</button>
+        <button class="btn btn-outline" onclick="tetrisPause()" style="font-size:.65rem;padding:.6rem 1rem">⏸ Пауза</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CONTRACT OVERLAY -->
+<!-- ══════════════════════════════════════════ -->
+<div class="overlay" id="contract-overlay">
+<div class="overlay-inner">
+  <button class="overlay-close" onclick="closeGame('contract')">✕</button>
+  <div class="overlay-title">📝 Contracto — Склади договір</div>
+  <div class="overlay-sub">Перетягни або натисни пункти у правильному порядку для господарського договору постачання</div>
+  <div class="contract-wrap" id="contract-game">
+    <div>
+      <div class="contract-pool">
+        <h4>📦 Доступні пункти</h4>
+        <div id="clause-pool"></div>
+      </div>
+      <div style="margin-top:1rem">
+        <button class="btn btn-primary" onclick="checkContract()" style="font-size:.7rem;padding:.7rem 1.5rem">✅ Перевірити</button>
+        <button class="btn btn-outline" onclick="resetContract()" style="font-size:.7rem;padding:.7rem 1.5rem;margin-left:.5rem">🔄 Скинути</button>
+      </div>
+    </div>
+    <div class="contract-slots">
+      <h4>📋 Структура договору (клікни пункт щоб додати)</h4>
+      <div id="contract-slots"></div>
+    </div>
+  </div>
+  <div id="contract-result" style="margin-top:1.5rem"></div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CALC OVERLAY -->
+<!-- ══════════════════════════════════════════ -->
+<div class="overlay" id="calc-overlay">
+<div class="overlay-inner">
+  <button class="overlay-close" onclick="closeGame('calc')">✕</button>
+  <div class="overlay-title">🧮 Податковий Калькулятор</div>
+  <div class="overlay-sub">Розрахунок податкового навантаження для різних груп ФОП</div>
+  <div style="text-align:center;padding:2rem">
+    <p style="font-family:var(--font-mono);color:var(--muted)">Прокрути вниз до секції "Калькулятор ФОП" або</p>
+    <a href="#calc" onclick="closeGame('calc')" class="btn btn-primary" style="margin-top:1rem;display:inline-flex">📊 Перейти до калькулятора</a>
+  </div>
+</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-title" id="toast-title"></div>
+  <div id="toast-body"></div>
+</div>
+
+<!-- ACHIEVEMENT -->
+<div class="achievement-popup" id="achievement">
+  <div class="ach-icon" id="ach-icon">🏆</div>
+  <div class="ach-text">
+    <div class="ach-title" id="ach-title">Досягнення!</div>
+    <div id="ach-desc" style="color:var(--muted)"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// GLOBAL STATE
+// ══════════════════════════════════════════
+let totalXP = 0;
+const leaderboardData = [
+  {name:"Олена К.", score:2850, badge:"ТОВ-ник"},
+  {name:"Дмитро В.", score:2200, badge:"Договірний майстер"},
+  {name:"Аліна М.", score:1950, badge:"Ні хабарям!"},
+  {name:"Роман Б.", score:1400, badge:"ФОП"},
+  {name:"Таня О.", score:980, badge:"Стажер"},
+];
+
+function addXP(pts, label){
+  totalXP += pts;
+  document.getElementById('total-xp').textContent = totalXP;
+  showToast(`+${pts} XP`, label || 'Отримано досвід!');
+}
+
+// ══════════════════════════════════════════
+// TOAST & ACHIEVEMENT
+// ══════════════════════════════════════════
+function showToast(title, body){
+  const t = document.getElementById('toast');
+  document.getElementById('toast-title').textContent = title;
+  document.getElementById('toast-body').textContent = body;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+function showAchievement(icon, title, desc){
+  const a = document.getElementById('achievement');
+  document.getElementById('ach-icon').textContent = icon;
+  document.getElementById('ach-title').textContent = title;
+  document.getElementById('ach-desc').textContent = desc;
+  a.classList.add('show');
+  setTimeout(()=>a.classList.remove('show'), 4000);
+}
+
+// ══════════════════════════════════════════
+// OVERLAY MANAGEMENT
+// ══════════════════════════════════════════
+function openGame(name){
+  document.querySelectorAll('.overlay').forEach(o=>o.classList.remove('active'));
+  document.getElementById(name+'-overlay').classList.add('active');
+  document.body.style.overflow='hidden';
+  if(name==='quiz') initQuiz();
+  if(name==='pacman') initPacman();
+  if(name==='tetris') initTetris();
+  if(name==='contract') initContract();
+}
+function closeGame(name){
+  document.getElementById(name+'-overlay').classList.remove('active');
+  document.body.style.overflow='';
+  if(name==='pacman') pausePacman();
+  if(name==='tetris') { if(tetrisInterval) clearInterval(tetrisInterval); tetrisInterval=null; }
+}
+
+// ══════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════
+function switchTab(id){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ══════════════════════════════════════════
+// QUIZ GAME
+// ══════════════════════════════════════════
+const quizData = [
+  {q:"Який строк реєстрації ФОП відповідно до чинного законодавства?", a:["7 робочих днів","1 робочий день","3 дні","30 днів"], correct:1, explain:"За ЗУ 'Про державну реєстрацію юридичних осіб...' реєстрація ФОП здійснюється протягом 1 робочого дня безкоштовно.", law:"ЗУ 'Про держреєстрацію' ст. 26"},
+  {q:"Які обов'язкові умови господарського договору?", a:["Тільки ціна та строк","Предмет, ціна, строк виконання","Підписи та печатки сторін","Банківські реквізити сторін"], correct:1, explain:"Згідно зі ст. 180 ГКУ істотними умовами господарського договору є предмет, ціна та строк дії договору.", law:"ГКУ ст. 180"},
+  {q:"Яка максимальна ставка єдиного податку для 3-ї групи ФОП без ПДВ?", a:["3%","5%","10%","18%"], correct:1, explain:"Платники 3-ї групи сплачують 3% (якщо є платником ПДВ) або 5% (якщо не є платником ПДВ) від доходу.", law:"ПКУ ст. 293"},
+  {q:"Яка відповідальність передбачена за хабарництво (ст. 368 ККУ) у великому розмірі?", a:["Штраф","До 3 років","До 12 років позбавлення волі","Громадські роботи"], correct:2, explain:"За одержання хабара у великому розмірі передбачено позбавлення волі на строк від 8 до 12 років з конфіскацією майна.", law:"ККУ ст. 368"},
+  {q:"Хто є вищим органом управління ТОВ?", a:["Директор","Наглядова рада","Загальні збори учасників","Правління"], correct:2, explain:"Відповідно до ст. 32 ЗУ 'Про ТОВ та ТДВ' вищим органом товариства є загальні збори його учасників.", law:"ЗУ 'Про ТОВ' ст. 32"},
+  {q:"Який загальний строк позовної давності в господарських відносинах?", a:["1 рік","2 роки","3 роки","5 років"], correct:2, explain:"Загальна позовна давність встановлена тривалістю у три роки відповідно до ст. 257 ЦКУ, що застосовується і в господарських відносинах.", law:"ЦКУ ст. 257"},
+  {q:"Яка ставка ЄСВ для ФОП на спрощеній системі?", a:["10%","18%","22%","44%"], correct:2, explain:"Єдиний соціальний внесок для ФОП встановлений у розмірі 22% від мінімальної заробітної плати щомісяця, незалежно від отриманого доходу.", law:"ЗУ 'Про ЄСВ' ст. 7"},
+  {q:"Який орган здійснює розгляд господарських спорів між підприємцями?", a:["Суд загальної юрисдикції","Господарський суд","Адміністративний суд","Третейський суд"], correct:1, explain:"Господарські суди розглядають справи у спорах між юридичними особами, ФОП та органами державної влади у сфері господарювання.", law:"ГПК ст. 12"},
+  {q:"Що таке форс-мажор у господарських відносинах?", a:["Штрафна санкція","Обставини непереборної сили, що звільняють від відповідальності","Вид страхування","Банківська гарантія"], correct:1, explain:"Форс-мажор (ст. 218 ГКУ) — обставини непереборної сили, за яких сторона звільняється від відповідальності за невиконання зобов'язань.", law:"ГКУ ст. 218"},
+  {q:"Скільки найманих працівників може мати ФОП 2-ї групи?", a:["Без обмежень","Не більше 5","Не більше 10","Не більше 20"], correct:2, explain:"ФОП 2-ї групи може одночасно використовувати працю найманих осіб, кількість яких не перевищує 10 осіб.", law:"ПКУ ст. 291"},
+  {q:"Що перевіряє НАБУ?", a:["Податкові декларації бізнесу","Корупційні злочини держслужбовців","Порушення трудового законодавства","Митні правопорушення"], correct:1, explain:"НАБУ — Національне антикорупційне бюро — розслідує корупційні злочини осіб, уповноважених на виконання функцій держави.", law:"ЗУ 'Про НАБУ' ст. 1"},
+  {q:"Яка ставка ПДВ є основною в Україні?", a:["7%","10%","18%","20%"], correct:3, explain:"Основна ставка ПДВ в Україні становить 20% від бази оподаткування. Знижені ставки: 7% (медикаменти, книги), 0% (експорт).", law:"ПКУ ст. 193"},
+  {q:"Що є підставою для ліцензування діяльності?", a:["Бажання підприємця","Рішення ради директорів","Наявність у переліку ЗУ 'Про ліцензування'","Реєстрація ТОВ"], correct:2, explain:"Ліцензуванню підлягають виключно ті види діяльності, що прямо визначені у ЗУ 'Про ліцензування видів господарської діяльності' 2015 року.", law:"ЗУ 'Про ліцензування' ст. 7"},
+  {q:"Яка мінімальна сума боргу для відкриття справи про банкрутство?", a:["Будь-яка сума","100 МЗП","300 МЗП","1000 МЗП"], correct:2, explain:"Справа про банкрутство може бути відкрита, якщо безспірні вимоги кредиторів сукупно становлять не менше 300 мінімальних заробітних плат.", law:"КУзПБ ст. 34"},
+  {q:"Що таке господарська пеня?", a:["Фіксований штраф за порушення","Щоденна відсоткова санкція за прострочення","Форма неустойки у % від вартості договору разово","Процент від збитків держави"], correct:1, explain:"Пеня — це вид штрафних санкцій, що нараховується у відсотковому відношенні до суми несвоєчасно виконаного зобов'язання за кожен день прострочення.", law:"ГКУ ст. 230-232"},
+];
+
+let quizState = { current:0, score:0, hints:{5050:true,law:true,skip:true}, answered:false };
+
+function initQuiz(){
+  quizState = { current:0, score:0, hints:{5050:true,law:true,skip:true}, answered:false };
+  document.getElementById('quiz-result').style.display='none';
+  document.getElementById('quiz-container').style.display='block';
+  document.getElementById('hint-5050').disabled=false;
+  document.getElementById('hint-law').disabled=false;
+  document.getElementById('hint-skip').disabled=false;
+  renderQuestion();
+}
+function renderQuestion(){
+  const q = quizData[quizState.current];
+  const total = quizData.length;
+  document.getElementById('quiz-q-num').textContent = `Питання ${quizState.current+1}/${total}`;
+  document.getElementById('quiz-score').textContent = quizState.score;
+  document.getElementById('quiz-progress').style.width = ((quizState.current/total)*100)+'%';
+  document.getElementById('quiz-question').textContent = q.q;
+  document.getElementById('quiz-explain').classList.remove('show');
+  document.getElementById('quiz-explain').textContent='';
+  document.getElementById('quiz-next').style.display='none';
+  quizState.answered=false;
+  const letters=['А','Б','В','Г'];
+  const answersEl = document.getElementById('quiz-answers');
+  answersEl.innerHTML = q.a.map((ans,i)=>`
+    <button class="quiz-answer" onclick="answerQuiz(${i})">
+      <span class="quiz-answer-letter">${letters[i]}</span>${ans}
+    </button>`).join('');
+  document.getElementById('hint-5050').disabled=!quizState.hints['5050'];
+  document.getElementById('hint-law').disabled=!quizState.hints['law'];
+  document.getElementById('hint-skip').disabled=!quizState.hints['skip'];
+}
+function answerQuiz(idx){
+  if(quizState.answered) return;
+  quizState.answered=true;
+  const q = quizData[quizState.current];
+  const btns = document.querySelectorAll('.quiz-answer');
+  btns.forEach(b=>b.classList.add('disabled'));
+  if(idx===q.correct){
+    btns[idx].classList.add('correct');
+    quizState.score += 100;
+    addXP(100,'Правильна відповідь!');
+    document.getElementById('quiz-score').textContent=quizState.score;
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+  }
+  const exp = document.getElementById('quiz-explain');
+  exp.textContent = `📚 ${q.explain} (${q.law})`;
+  exp.classList.add('show');
+  document.getElementById('quiz-next').style.display='inline-flex';
+}
+function nextQuestion(){
+  quizState.current++;
+  if(quizState.current>=quizData.length) showQuizResult();
+  else renderQuestion();
+}
+function showQuizResult(){
+  document.getElementById('quiz-container').style.display='none';
+  const res = document.getElementById('quiz-result');
+  res.style.display='block';
+  const pct = Math.round((quizState.score/(quizData.length*100))*100);
+  let emoji='😅', title='Є куди рости!', desc='Повтори нормативну базу та спробуй ще раз. У тебе все вийде!';
+  if(pct>=80){ emoji='🏆'; title='Відмінний підприємець!'; desc='Ти чудово знаєш господарське право! Твій бізнес у надійних руках.'; showAchievement('🎓','Правовий Майстер!','Набрав '+pct+'% у вікторині'); }
+  else if(pct>=60){ emoji='👍'; title='Непоганий результат!'; desc='Ти маєш базові знання, але є кілька прогалин — особливо в податках та договорах.'; }
+  res.innerHTML=`<div class="result-screen">
+    <span class="result-emoji">${emoji}</span>
+    <div class="result-score">${quizState.score} XP</div>
+    <div class="result-title">${title}</div>
+    <div class="result-desc">${desc}<br><br>Правильних відповідей: ${Math.round(quizState.score/100)} з ${quizData.length}<br>Результат: ${pct}%</div>
+    <div class="result-actions">
+      <button class="btn btn-primary" onclick="initQuiz()">🔄 Грати ще</button>
+      <button class="btn btn-outline" onclick="closeGame('quiz')">✕ Закрити</button>
+    </div>
+  </div>`;
+}
+function useHint(type){
+  const q = quizData[quizState.current];
+  if(type==='5050' && quizState.hints['5050']){
+    quizState.hints['5050']=false;
+    const btns=[...document.querySelectorAll('.quiz-answer')];
+    let hidden=0;
+    btns.forEach((b,i)=>{ if(i!==q.correct && hidden<2){ b.style.opacity='.2'; b.style.pointerEvents='none'; hidden++; } });
+    document.getElementById('hint-5050').disabled=true;
+    showToast('Підказка: 50/50','Два варіанти прибрано!');
+  } else if(type==='law' && quizState.hints['law']){
+    quizState.hints['law']=false;
+    document.getElementById('hint-law').disabled=true;
+    showToast('📚 Норма закону',q.law);
+  } else if(type==='skip' && quizState.hints['skip']){
+    quizState.hints['skip']=false;
+    document.getElementById('hint-skip').disabled=true;
+    quizState.answered=true;
+    document.getElementById('quiz-next').style.display='inline-flex';
+    showToast('⏭ Питання пропущено','');
+  }
+}
+
+// ══════════════════════════════════════════
+// PACMAN GAME
+// ══════════════════════════════════════════
+let pacGame = null;
+let pacAnimId = null;
+function initPacman(){
+  if(pacGame) { pausePacman(); }
+  const canvas = document.getElementById('pacman-canvas');
+  const W = Math.min(480, canvas.parentElement.clientWidth-40);
+  canvas.width = W; canvas.height = Math.round(W*0.75);
+  pacGame = new PacmanGame(canvas);
+  pacGame.start();
+}
+function pausePacman(){ if(pacGame) pacGame.paused = !pacGame.paused; }
+function togglePause(){
+  if(pacGame){ pacGame.paused=!pacGame.paused; document.getElementById('btn-pause').textContent = pacGame.paused?'▶':'⏸'; }
+}
+function pacDir(dx,dy){ if(pacGame) pacGame.nextDir={x:dx,y:dy}; }
+
+class PacmanGame {
+  constructor(canvas){
+    this.canvas=canvas; this.ctx=canvas.getContext('2d');
+    this.W=canvas.width; this.H=canvas.height;
+    this.COLS=16; this.ROWS=12;
+    this.cw=Math.floor(this.W/this.COLS); this.ch=Math.floor(this.H/this.ROWS);
+    this.score=0; this.level=1; this.lives=3; this.paused=false;
+    this.mouthAngle=0; this.mouthDir=1;
+    this.scared=false; this.scaredTimer=0;
+    this.nabusAvail=3;
+    this.initLevel();
+  }
+  initLevel(){
+    this.player={x:1,y:1,dir:{x:1,y:0}};
+    this.nextDir={x:1,y:0};
+    this.docs=[]; this.bribes=[]; this.nabus=[];
+    this.ghosts=[];
+    // generate simple maze (1=wall, 0=open)
+    this.maze=[];
+    for(let r=0;r<this.ROWS;r++){
+      this.maze[r]=[];
+      for(let c=0;c<this.COLS;c++){
+        this.maze[r][c]=(r===0||r===this.ROWS-1||c===0||c===this.COLS-1)?1:0;
+        if(r%3===0&&c%4===0&&r>0&&c>0&&r<this.ROWS-1&&c<this.COLS-1) this.maze[r][c]=1;
+      }
+    }
+    // scatter docs
+    for(let r=0;r<this.ROWS;r++) for(let c=0;c<this.COLS;c++){
+      if(!this.maze[r][c]&&!(r===1&&c===1)) this.docs.push({x:c,y:r,eaten:false});
+    }
+    // place bribes
+    for(let i=0;i<4+this.level;i++) this.bribes.push({x:Math.floor(Math.random()*(this.COLS-2))+1,y:Math.floor(Math.random()*(this.ROWS-2))+1,dir:{x:1,y:0},timer:0,scared:false});
+    // place nabus
+    for(let i=0;i<this.nabusAvail;i++) this.nabus.push({x:2+i*4,y:this.ROWS-2,eaten:false});
+  }
+  start(){
+    if(pacAnimId) cancelAnimationFrame(pacAnimId);
+    let last=0; const step=150;
+    const loop=(ts)=>{
+      if(!this.paused&&ts-last>step){ last=ts; this.update(); }
+      this.draw();
+      pacAnimId=requestAnimationFrame(loop);
+    };
+    pacAnimId=requestAnimationFrame(loop);
+  }
+  update(){
+    const p=this.player;
+    // try next dir
+    const nx=p.x+this.nextDir.x, ny=p.y+this.nextDir.y;
+    if(nx>=0&&nx<this.COLS&&ny>=0&&ny<this.ROWS&&!this.maze[ny][nx]){p.dir=this.nextDir;}
+    // move player
+    const mx=p.x+p.dir.x, my=p.y+p.dir.y;
+    if(mx>=0&&mx<this.COLS&&my>=0&&my<this.ROWS&&!this.maze[my][mx]){p.x=mx;p.y=my;}
+    // eat doc
+    this.docs.forEach(d=>{ if(!d.eaten&&d.x===p.x&&d.y===p.y){ d.eaten=true; this.score+=10; }});
+    // eat nabu
+    this.nabus.forEach(n=>{ if(!n.eaten&&n.x===p.x&&n.y===p.y){ n.eaten=true; this.scared=true; this.scaredTimer=15; this.score+=50; showToast('🔵 НАБУ!','Тепер ти ловиш корупціонерів!'); }});
+    if(this.scaredTimer>0){ this.scaredTimer--; if(this.scaredTimer===0) this.scared=false; }
+    // move bribes
+    this.bribes.forEach(b=>{
+      b.timer++;
+      if(b.timer%2!==0) return;
+      const dirs=[{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}];
+      if(Math.random()<0.4){
+        // chase / flee
+        if(this.scared){
+          // flee
+          const best=dirs.reduce((a,d)=>{
+            const nx=b.x+d.x,ny=b.y+d.y;
+            if(nx<0||nx>=this.COLS||ny<0||ny>=this.ROWS||this.maze[ny][nx]) return a;
+            const dist=Math.abs(nx-p.x)+Math.abs(ny-p.y);
+            return dist>(a.dist||0)?{d,dist}:a;
+          },{d:dirs[0],dist:0});
+          const nx=b.x+best.d.x,ny=b.y+best.d.y;
+          if(nx>=0&&nx<this.COLS&&ny>=0&&ny<this.ROWS&&!this.maze[ny][nx]){b.x=nx;b.y=ny;}
+        } else {
+          const dx=p.x-b.x, dy=p.y-b.y;
+          const pDir=Math.abs(dx)>Math.abs(dy)?{x:Math.sign(dx),y:0}:{x:0,y:Math.sign(dy)};
+          const nx=b.x+pDir.x,ny=b.y+pDir.y;
+          if(nx>=0&&nx<this.COLS&&ny>=0&&ny<this.ROWS&&!this.maze[ny][nx]){b.x=nx;b.y=ny;}
+          else { const rd=dirs[Math.floor(Math.random()*dirs.length)]; const rnx=b.x+rd.x,rny=b.y+rd.y; if(rnx>=0&&rnx<this.COLS&&rny>=0&&rny<this.ROWS&&!this.maze[rny][rnx]){b.x=rnx;b.y=rny;} }
+        }
+      }
+      // check collision
+      if(b.x===p.x&&b.y===p.y){
+        if(this.scared){ b.x=Math.floor(this.COLS/2);b.y=Math.floor(this.ROWS/2); this.score+=200; showAchievement('🚔','Корупціонер спійманий!','Підприємець захищений!'); }
+        else { this.lives--; if(this.lives<=0){ this.gameOver(); } else { p.x=1;p.y=1; } }
+      }
+    });
+    // update HUD
+    document.getElementById('pac-score').textContent=this.score;
+    document.getElementById('pac-level').textContent=this.level;
+    document.getElementById('pac-lives').textContent='❤️'.repeat(Math.max(0,this.lives));
+    // check win
+    if(this.docs.every(d=>d.eaten)){ this.level++; this.score+=500; addXP(200,'Рівень пройдено!'); this.initLevel(); }
+  }
+  draw(){
+    const {ctx,W,H,COLS,ROWS,cw,ch}=this;
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    // maze
+    for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+      if(this.maze[r][c]){
+        ctx.fillStyle='#0057B7'; ctx.fillRect(c*cw,r*ch,cw,ch);
+        ctx.strokeStyle='#003d85'; ctx.lineWidth=1; ctx.strokeRect(c*cw,r*ch,cw,ch);
+      }
+    }
+    // docs
+    this.docs.forEach(d=>{ if(!d.eaten){ ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(d.x*cw+cw/2,d.y*ch+ch/2,2,0,Math.PI*2); ctx.fill(); }});
+    // nabus
+    this.nabus.forEach(n=>{ if(!n.eaten){
+      ctx.fillStyle='#00C3FF'; ctx.beginPath(); ctx.arc(n.x*cw+cw/2,n.y*ch+ch/2,cw/3,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#fff'; ctx.font=`${cw*.5}px sans-serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('N',n.x*cw+cw/2,n.y*ch+ch/2);
+    }});
+    // bribes
+    this.bribes.forEach(b=>{
+      if(this.scared){ ctx.fillStyle='#0057B7'; }
+      else { ctx.fillStyle='#FFD700'; }
+      ctx.font=`${cw*.8}px sans-serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(this.scared?'😱':'💰',b.x*cw+cw/2,b.y*ch+ch/2);
+    });
+    // player (pacman)
+    this.mouthAngle+=0.15*this.mouthDir;
+    if(this.mouthAngle>0.4||this.mouthAngle<0) this.mouthDir*=-1;
+    const px=this.player.x*cw+cw/2, py=this.player.y*ch+ch/2;
+    const angle=Math.atan2(this.player.dir.y,this.player.dir.x);
+    ctx.fillStyle='#FFEC00'; ctx.beginPath();
+    ctx.moveTo(px,py);
+    ctx.arc(px,py,cw/2-1,angle+this.mouthAngle,angle+Math.PI*2-this.mouthAngle);
+    ctx.closePath(); ctx.fill();
+    // scared overlay
+    if(this.scared){
+      ctx.fillStyle='rgba(0,195,255,0.08)'; ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='#00C3FF'; ctx.font='14px '+'"Unbounded", sans-serif'; ctx.textAlign='center';
+      ctx.fillText('РЕЖИМ НАБУ!',W/2,20);
+    }
+  }
+  gameOver(){
+    if(pacAnimId) cancelAnimationFrame(pacAnimId);
+    addXP(this.score/10|0,'Pac-Man результат: '+this.score);
+    const ctx=this.ctx;
+    ctx.fillStyle='rgba(0,0,0,0.8)'; ctx.fillRect(0,0,this.W,this.H);
+    ctx.fillStyle='#FFD700'; ctx.font='bold 20px "Unbounded"'; ctx.textAlign='center';
+    ctx.fillText('GAME OVER',this.W/2,this.H/2-20);
+    ctx.fillStyle='#fff'; ctx.font='14px "JetBrains Mono"';
+    ctx.fillText('Рахунок: '+this.score,this.W/2,this.H/2+10);
+    ctx.fillText('Натисни щоб знову',this.W/2,this.H/2+35);
+    this.canvas.onclick=()=>{ this.canvas.onclick=null; this.lives=3; this.score=0; this.level=1; this.initLevel(); this.start(); };
+  }
+}
+document.addEventListener('keydown',e=>{
+  const map={'ArrowLeft':[-1,0],'ArrowRight':[1,0],'ArrowUp':[0,-1],'ArrowDown':[0,1],'a':[-1,0],'d':[1,0],'w':[0,-1],'s':[0,1]};
+  if(map[e.key]){ e.preventDefault(); const [dx,dy]=map[e.key]; if(pacGame) pacGame.nextDir={x:dx,y:dy}; }
+});
+
+// ══════════════════════════════════════════
+// TETRIS GAME
+// ══════════════════════════════════════════
+const TETRIS_COLORS=['#FFD700','#0057B7','#FF3355','#00FF88','#9B59B6','#FF7F00','#C0C0C0'];
+const TETRIS_LABELS=['ПДВ','ЄСВ','ПДФО','ЄП','ВЗ','ПнМ','АЗ'];
+const TETRIS_PIECES=[
+  [[1,1,1,1]],
+  [[1,1],[1,1]],
+  [[0,1,0],[1,1,1]],
+  [[1,0,0],[1,1,1]],
+  [[0,0,1],[1,1,1]],
+  [[0,1,1],[1,1,0]],
+  [[1,1,0],[0,1,1]],
+];
+let tetState=null, tetrisInterval=null;
+
+function initTetris(){
+  tetState={
+    board:Array.from({length:24},()=>Array(12).fill(null)),
+    piece:null, next:null, score:0, level:1, lines:0, gameOver:false, paused:false
+  };
+  const canvas=document.getElementById('tetris-canvas');
+  const W=canvas.parentElement.clientWidth-220; // leave room for side panel
+  const cellSz=Math.max(16,Math.min(24,Math.floor(W/12)));
+  canvas.width=cellSz*12; canvas.height=cellSz*20;
+  tetState.COLS=12; tetState.ROWS=20; tetState.cellSz=cellSz;
+  tetState.board=Array.from({length:tetState.ROWS},()=>Array(tetState.COLS).fill(null));
+  tetrisSpawn(); tetrisSpawn();
+  tetrisDraw();
+}
+function tetrisStart(){
+  if(tetrisInterval) clearInterval(tetrisInterval);
+  initTetris();
+  tetrisInterval=setInterval(tetrisTick,700);
+}
+function tetrisPause(){
+  if(!tetState) return;
+  tetState.paused=!tetState.paused;
+  showToast(tetState.paused?'⏸ Пауза':'▶ Продовжуємо','');
+}
+function tetrisSpawn(){
+  const ts=tetState;
+  if(!ts.next){ const i=Math.floor(Math.random()*TETRIS_PIECES.length); ts.next={shape:TETRIS_PIECES[i],color:TETRIS_COLORS[i%7],label:TETRIS_LABELS[i%7]}; }
+  ts.piece={...ts.next, x:Math.floor(ts.COLS/2)-1, y:0};
+  const ni=Math.floor(Math.random()*TETRIS_PIECES.length);
+  ts.next={shape:TETRIS_PIECES[ni],color:TETRIS_COLORS[ni%7],label:TETRIS_LABELS[ni%7]};
+  if(tetrisCollide(ts.piece,ts.piece.x,ts.piece.y)){ ts.gameOver=true; clearInterval(tetrisInterval); tetrisInterval=null; addXP(ts.score,'Податковий Тетріс'); showToast('Гру завершено!','Рахунок: '+ts.score); }
+}
+function tetrisCollide(piece,ox,oy){
+  const ts=tetState;
+  for(let r=0;r<piece.shape.length;r++) for(let c=0;c<piece.shape[r].length;c++){
+    if(!piece.shape[r][c]) continue;
+    const nx=ox+c, ny=oy+r;
+    if(nx<0||nx>=ts.COLS||ny>=ts.ROWS) return true;
+    if(ny>=0&&ts.board[ny][nx]) return true;
+  }
+  return false;
+}
+function tetrisTick(){
+  if(!tetState||tetState.paused||tetState.gameOver) return;
+  const ts=tetState;
+  if(!tetrisCollide(ts.piece,ts.piece.x,ts.piece.y+1)) ts.piece.y++;
+  else { tetrisLock(); tetrisClear(); tetrisSpawn(); }
+  tetrisDraw();
+}
+function tetrisLock(){
+  const ts=tetState,p=ts.piece;
+  for(let r=0;r<p.shape.length;r++) for(let c=0;c<p.shape[r].length;c++){
+    if(!p.shape[r][c]) continue;
+    const ny=p.y+r, nx=p.x+c;
+    if(ny>=0&&ny<ts.ROWS) ts.board[ny][nx]={color:p.color,label:p.label};
+  }
+}
+function tetrisClear(){
+  const ts=tetState; let cleared=0;
+  ts.board=ts.board.filter(row=>{ if(row.every(c=>c)){ cleared++; return false; } return true; });
+  while(ts.board.length<ts.ROWS) ts.board.unshift(Array(ts.COLS).fill(null));
+  if(cleared>0){ ts.lines+=cleared; ts.score+=cleared*100*ts.level; ts.level=Math.floor(ts.lines/10)+1; document.getElementById('tet-score').textContent=ts.score; document.getElementById('tet-level').textContent=ts.level; document.getElementById('tet-lines').textContent=ts.lines; if(tetrisInterval){ clearInterval(tetrisInterval); tetrisInterval=setInterval(tetrisTick,Math.max(100,700-ts.level*60)); } }
+}
+function tetrisDraw(){
+  if(!tetState) return;
+  const ts=tetState,c=document.getElementById('tetris-canvas').getContext('2d'),sz=ts.cellSz;
+  c.fillStyle='#000'; c.fillRect(0,0,ts.COLS*sz,ts.ROWS*sz);
+  // board
+  for(let r=0;r<ts.ROWS;r++) for(col=0;col<ts.COLS;col++){
+    if(ts.board[r][col]){ c.fillStyle=ts.board[r][col].color; c.fillRect(col*sz,r*sz,sz-1,sz-1); c.fillStyle='rgba(0,0,0,0.4)'; c.font=`${sz*.35}px "JetBrains Mono"`; c.fillText(ts.board[r][col].label,col*sz+1,r*sz+sz*.6); }
+    else { c.strokeStyle='rgba(255,255,255,0.05)'; c.strokeRect(col*sz,r*sz,sz,sz); }
+  }
+  // ghost
+  if(ts.piece){ let gy=ts.piece.y; while(!tetrisCollide(ts.piece,ts.piece.x,gy+1)) gy++; c.globalAlpha=.2; drawPiece(c,ts.piece,ts.piece.x,gy,sz); c.globalAlpha=1; drawPiece(c,ts.piece,ts.piece.x,ts.piece.y,sz); }
+  if(ts.gameOver){ c.fillStyle='rgba(0,0,0,0.7)'; c.fillRect(0,0,ts.COLS*sz,ts.ROWS*sz); c.fillStyle='#FFD700'; c.font=`bold ${sz}px "Unbounded"`; c.textAlign='center'; c.fillText('ШТРАФ!',ts.COLS*sz/2,ts.ROWS*sz/2); }
+  // next
+  const nc=document.getElementById('next-canvas').getContext('2d');
+  nc.fillStyle='#12121A'; nc.fillRect(0,0,120,120);
+  if(ts.next){ const nsz=20,ox=(120-ts.next.shape[0].length*nsz)/2,oy=(120-ts.next.shape.length*nsz)/2; drawPiece(nc,ts.next,ox/nsz,oy/nsz,nsz); }
+}
+function drawPiece(c,piece,ox,oy,sz){
+  for(let r=0;r<piece.shape.length;r++) for(let col=0;col<piece.shape[r].length;col++){
+    if(!piece.shape[r][col]) continue;
+    c.fillStyle=piece.color; c.fillRect((ox+col)*sz,(oy+r)*sz,sz-1,sz-1);
+    c.fillStyle='rgba(0,0,0,0.5)'; c.font=`${sz*.35}px "JetBrains Mono"`;
+    c.fillText(piece.label,(ox+col)*sz+1,(oy+r)*sz+sz*.65);
+  }
+}
+document.addEventListener('keydown',e=>{
+  if(!tetState||tetState.paused||tetState.gameOver||!document.getElementById('tetris-overlay').classList.contains('active')) return;
+  const ts=tetState;
+  if(e.key==='ArrowLeft'&&!tetrisCollide(ts.piece,ts.piece.x-1,ts.piece.y)) ts.piece.x--;
+  else if(e.key==='ArrowRight'&&!tetrisCollide(ts.piece,ts.piece.x+1,ts.piece.y)) ts.piece.x++;
+  else if(e.key==='ArrowDown'){ if(!tetrisCollide(ts.piece,ts.piece.x,ts.piece.y+1)) ts.piece.y++; }
+  else if(e.key==='ArrowUp'||e.key===' '){
+    if(e.key===' '){ while(!tetrisCollide(ts.piece,ts.piece.x,ts.piece.y+1)) ts.piece.y++; tetrisLock(); tetrisClear(); tetrisSpawn(); }
+    else { const rot=ts.piece.shape[0].map((_,i)=>ts.piece.shape.map(r=>r[i]).reverse()); if(!tetrisCollide({...ts.piece,shape:rot},ts.piece.x,ts.piece.y)) ts.piece.shape=rot; }
+  }
+  tetrisDraw();
+});
+
+// ══════════════════════════════════════════
+// CONTRACT GAME
+// ══════════════════════════════════════════
+const clauses=[
+  {id:1,text:'1. Назва та дата договору',correct:0},
+  {id:2,text:'2. Реквізити сторін (Продавець та Покупець)',correct:1},
+  {id:3,text:'3. Предмет договору (товар, кількість)',correct:2},
+  {id:4,text:'4. Ціна та порядок оплати',correct:3},
+  {id:5,text:'5. Строки та умови поставки',correct:4},
+  {id:6,text:'6. Якість товару та гарантії',correct:5},
+  {id:7,text:'7. Відповідальність сторін та штрафні санкції',correct:6},
+  {id:8,text:'8. Форс-мажорні обставини',correct:7},
+  {id:9,text:'9. Вирішення спорів (підсудність)',correct:8},
+  {id:10,text:'10. Строк дії та підписи',correct:9},
+  // wrong clauses
+  {id:11,text:'Кількість кімнат в офісі',correct:-1},
+  {id:12,text:'Улюблені страви директора',correct:-1},
+  {id:13,text:'Соціальний статус засновників',correct:-1},
+];
+let contractSlots=[];
+let contractPool=[];
+
+function initContract(){
+  contractPool=[...clauses].sort(()=>Math.random()-.5);
+  contractSlots=Array(10).fill(null);
+  renderContract();
+}
+function renderContract(){
+  const poolEl=document.getElementById('clause-pool');
+  const slotsEl=document.getElementById('contract-slots');
+  poolEl.innerHTML=contractPool.map((c,i)=>`
+    <span class="clause-chip ${c.placed?'placed':''}" onclick="placeClause(${i})">${c.text}</span>
+  `).join('');
+  slotsEl.innerHTML=Array(10).fill(0).map((_,i)=>`
+    <div class="slot-item ${contractSlots[i]?'filled':''}" onclick="removeSlot(${i})">
+      <span class="slot-num">${i+1}.</span>
+      ${contractSlots[i]||'<span style="opacity:.4">Клікни пункт зліва</span>'}
+    </div>
+  `).join('');
+  document.getElementById('contract-result').innerHTML='';
+}
+function placeClause(poolIdx){
+  const c=contractPool[poolIdx];
+  if(c.placed) return;
+  const slot=contractSlots.findIndex(s=>!s);
+  if(slot===-1){ showToast('Усі слоти заповнені','Видали зайвий пункт'); return; }
+  contractSlots[slot]=c.text;
+  contractPool[poolIdx].placed=true;
+  renderContract();
+}
+function removeSlot(idx){
+  const text=contractSlots[idx];
+  if(!text) return;
+  contractSlots[idx]=null;
+  const ci=contractPool.findIndex(c=>c.text===text);
+  if(ci>-1) contractPool[ci].placed=false;
+  renderContract();
+}
+function checkContract(){
+  let correct=0;
+  const slotsEl=document.getElementById('contract-slots').children;
+  contractSlots.forEach((text,i)=>{
+    if(!text) return;
+    const clause=clauses.find(c=>c.text===text);
+    if(clause&&clause.correct===i){ correct++; slotsEl[i].classList.add('filled'); slotsEl[i].classList.remove('error'); }
+    else { slotsEl[i].classList.add('error'); }
+  });
+  const total=contractSlots.filter(Boolean).length;
+  const xp=correct*50;
+  addXP(xp,'Договір: '+correct+'/10 правильно');
+  document.getElementById('contract-result').innerHTML=`
+    <div style="padding:1rem;background:${correct>=8?'rgba(0,255,136,0.1)':'rgba(255,215,0,0.1)'};border:1px solid ${correct>=8?'var(--success)':'var(--gold)'};font-family:var(--font-mono);font-size:.8rem">
+      ${correct>=8?'🏆':'⚠️'} Правильно розміщено: <b style="color:var(--gold)">${correct}/10</b> пунктів<br>
+      <span style="color:var(--muted);font-size:.7rem">Пам'ятай: ГКУ ст. 180 — предмет, ціна, строк — обов'язкові умови договору!</span>
+      ${correct>=8?'<br><span style="color:var(--success)">Чудовий договір! Твій бізнес захищений ✓</span>':''}
+    </div>`;
+  if(correct>=8) showAchievement('📝','Договірний майстер!','Склав бездоганний контракт!');
+}
+function resetContract(){ initContract(); }
+
+// ══════════════════════════════════════════
+// TAX CALCULATOR
+// ══════════════════════════════════════════
+function calcTaxes(){
+  const group=parseInt(document.getElementById('fop-group').value);
+  const income=parseFloat(document.getElementById('monthly-income').value)||0;
+  const mzp=parseFloat(document.getElementById('min-wage').value)||8000;
+  const subsist=parseFloat(document.getElementById('subsist').value)||3028;
+  let ep=0,esv=0,pdfo=0,vz=0;
+  esv=mzp*0.22;
+  if(group===1){ ep=subsist*0.1; pdfo=0; vz=0; }
+  else if(group===2){ ep=mzp*0.2; pdfo=0; vz=0; }
+  else { ep=income*0.05; pdfo=0; vz=0; } // 3 group, no PDV
+  const total=ep+esv+pdfo+vz;
+  const net=income-total;
+  const rate=income>0?((total/income)*100).toFixed(1):0;
+  document.getElementById('c-ep').textContent=ep.toFixed(0)+' грн';
+  document.getElementById('c-esv').textContent=esv.toFixed(0)+' грн';
+  document.getElementById('c-pdfo').textContent=pdfo.toFixed(0)+' грн';
+  document.getElementById('c-vz').textContent=vz.toFixed(0)+' грн';
+  document.getElementById('c-net').textContent=Math.max(0,net).toFixed(0)+' грн';
+  document.getElementById('c-total').textContent=total.toFixed(0)+' грн';
+  document.getElementById('c-rate').textContent=rate+'%';
+}
+calcTaxes();
+
+// ══════════════════════════════════════════
+// LEADERBOARD
+// ══════════════════════════════════════════
+function renderLeaderboard(){
+  const el=document.getElementById('leaderboard');
+  const medals=['🥇','🥈','🥉'];
+  el.innerHTML=leaderboardData.sort((a,b)=>b.score-a.score).map((p,i)=>`
+    <div class="lb-row">
+      <div class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${medals[i]||i+1}</div>
+      <div class="lb-name">${p.name}</div>
+      <span class="lb-badge">${p.badge}</span>
+      <div class="lb-score">${p.score} XP</div>
+    </div>`).join('');
+}
+renderLeaderboard();
+
+function addToLeaderboard(){
+  const name=prompt('Введи своє ім\'я для таблиці лідерів:');
+  if(!name) return;
+  const badges=['Стажер','ФОП','ТОВ-ник','Договірний майстер','Правовий Гуру'];
+  const badge=badges[Math.min(Math.floor(totalXP/500),badges.length-1)];
+  leaderboardData.push({name,score:totalXP,badge});
+  renderLeaderboard();
+  showAchievement('🏆','Ти в таблиці!',`${name} — ${totalXP} XP`);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+// Smooth scroll for anchors
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const target=document.querySelector(a.getAttribute('href'));
+    if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth'}); }
+  });
+});
+
+// Counter animation for hero stats
+const counters=document.querySelectorAll('.hero-stat-num');
+counters.forEach(c=>{
+  const val=c.textContent; if(val==='∞') return;
+  const num=parseInt(val); let cur=0;
+  const interval=setInterval(()=>{ cur+=Math.ceil(num/20); if(cur>=num){ cur=num; clearInterval(interval); } c.textContent=cur+(val.includes('+')? '+' : ''); },50);
+});
+
+// Welcome toast
+setTimeout(()=>showToast('🇺🇦 Ласкаво просимо!','Підприємець UA — навчайся граючи!'),1000);
+</script>
+</body>
+</html>
