@@ -15,9 +15,9 @@
   --dark2: #12121A;
   --dark3: #1A1A26;
   --card: #16161F;
-  --border: rgba(255,215,0,0.2);
+  --border: rgba(255,215,0,0.35);
   --text: #E8E8F0;
-  --muted: #6B6B8A;
+  --muted: #ABABC8;
   --success: #00FF88;
   --danger: #FF3355;
   --font-display: 'Unbounded', sans-serif;
@@ -61,15 +61,34 @@ body::before {
 }
 .logo {
   font-size: 1.1rem; font-weight:900; letter-spacing:-0.02em;
-  background: linear-gradient(135deg, var(--gold), var(--neon-blue));
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  color: #FFD700;
+  -webkit-text-fill-color: #FFD700;
 }
-.logo span { color: var(--neon-yellow); -webkit-text-fill-color: var(--neon-yellow); }
+.logo span { color: #FFD700; -webkit-text-fill-color: #FFD700; }
 .score-bar {
   display:flex; align-items:center; gap:1rem;
   font-family: var(--font-mono); font-size:.75rem; color: var(--gold);
 }
 .score-val { font-size:1.1rem; font-weight:700; }
+
+/* ─── COLOR SWITCHER ─── */
+.color-switcher {
+  display:flex; align-items:center; gap:.5rem;
+}
+.color-switcher-label {
+  font-family:var(--font-mono); font-size:.6rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em;
+}
+.color-dots {
+  display:flex; gap:.4rem; align-items:center;
+}
+.color-dot {
+  width:20px; height:20px; border-radius:50%; cursor:pointer;
+  border: 2px solid transparent;
+  transition: transform .15s, border-color .15s;
+  flex-shrink:0;
+}
+.color-dot:hover { transform: scale(1.25); }
+.color-dot.active { border-color: #fff; transform: scale(1.2); }
 .nav-links { display:flex; gap:1.5rem; }
 .nav-links a {
   color: var(--muted); text-decoration:none; font-size:.7rem; font-weight:700;
@@ -112,12 +131,16 @@ body::before {
   margin-bottom:1.5rem; position:relative;
   animation: fadeDown .7s ease .1s both;
 }
-.hero-title .line1 { display:block; color: var(--neon-yellow); }
+.hero-title .line1 {
+  display:block;
+  color: #FFD700;
+  -webkit-text-fill-color: #FFD700;
+}
 .hero-title .line2 { display:block; color: #fff; }
 .hero-title .line3 { display:block; color: var(--neon-blue); font-size:60%; }
 
 .hero-sub {
-  font-size:.85rem; color:var(--muted); max-width:600px; line-height:1.8;
+  font-size:.85rem; color:#D8D8EC; max-width:600px; line-height:1.8;
   margin-bottom:3rem; font-family:var(--font-mono);
   animation: fadeDown .8s ease .2s both;
 }
@@ -148,7 +171,7 @@ body::before {
 }
 .hero-stat { text-align:center; }
 .hero-stat-num { font-size:2rem; font-weight:900; color:var(--gold); display:block; }
-.hero-stat-label { font-size:.6rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; font-family:var(--font-mono); }
+.hero-stat-label { font-size:.6rem; color:#C8C8E0; text-transform:uppercase; letter-spacing:.1em; font-family:var(--font-mono); }
 
 @keyframes fadeDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
 
@@ -161,14 +184,14 @@ section { padding:5rem 2rem; max-width:1200px; margin:0 auto; }
 }
 .section-label::before { content:''; display:block; width:30px; height:1px; background:var(--gold); }
 .section-title { font-size:clamp(1.8rem,5vw,3rem); font-weight:900; line-height:1.1; margin-bottom:1rem; }
-.section-sub { color:var(--muted); font-family:var(--font-mono); font-size:.8rem; line-height:1.8; margin-bottom:3rem; }
+.section-sub { color:#C8C8E0; font-family:var(--font-mono); font-size:.8rem; line-height:1.8; margin-bottom:3rem; }
 
 /* ─── GAME CARDS ─── */
 .games-grid {
   display:grid; grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); gap:1.5rem;
 }
 .game-card {
-  background: var(--card); border:1px solid var(--border);
+  background: #303044; border:1px solid var(--border);
   padding:2rem; position:relative; overflow:hidden; cursor:pointer;
   transition: all .3s; group: true;
   clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
@@ -181,14 +204,14 @@ section { padding:5rem 2rem; max-width:1200px; margin:0 auto; }
 .game-card:hover { border-color: var(--accent, var(--gold)); transform:translateY(-4px); box-shadow:0 20px 40px rgba(0,0,0,0.4); }
 .game-card:hover::before { opacity:1; }
 .game-emoji { font-size:3rem; margin-bottom:1.5rem; display:block; }
-.game-num { position:absolute; top:1.5rem; right:1.5rem; font-size:4rem; font-weight:900; color:rgba(255,255,255,0.03); font-family:var(--font-mono); line-height:1; }
+.game-num { position:absolute; top:1.5rem; right:1.5rem; font-size:4rem; font-weight:900; color:rgba(255,255,255,0.08); font-family:var(--font-mono); line-height:1; }
 .game-tag {
   display:inline-block; padding:.3rem .8rem; font-size:.6rem; font-weight:700;
   text-transform:uppercase; letter-spacing:.1em; margin-bottom:1rem;
   background: rgba(255,215,0,0.1); color:var(--gold); border:1px solid rgba(255,215,0,0.3);
 }
 .game-title { font-size:1.1rem; font-weight:900; margin-bottom:.8rem; }
-.game-desc { font-family:var(--font-mono); font-size:.75rem; color:var(--muted); line-height:1.7; margin-bottom:1.5rem; }
+.game-desc { font-family:var(--font-mono); font-size:.75rem; color:#C0C0D8; line-height:1.7; margin-bottom:1.5rem; }
 .game-btn {
   display:inline-flex; align-items:center; gap:.5rem;
   color:var(--gold); font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em;
@@ -200,15 +223,15 @@ section { padding:5rem 2rem; max-width:1200px; margin:0 auto; }
 /* ─── INFO BLOCKS ─── */
 .info-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.5rem; }
 .info-card {
-  background: var(--dark3); border:1px solid var(--border);
+  background: #2E2E42; border:1px solid var(--border);
   padding:1.5rem; position:relative;
 }
 .info-card-header { display:flex; align-items:center; gap:.8rem; margin-bottom:1.5rem; }
-.info-icon { width:40px; height:40px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; background:rgba(255,215,0,0.1); border:1px solid rgba(255,215,0,0.3); flex-shrink:0; }
-.info-card-title { font-size:.85rem; font-weight:700; }
-.info-item { display:flex; align-items:flex-start; gap:.6rem; margin-bottom:.8rem; font-size:.72rem; font-family:var(--font-mono); color:var(--muted); line-height:1.6; }
+.info-icon { width:40px; height:40px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; background:rgba(255,215,0,0.15); border:1px solid rgba(255,215,0,0.4); flex-shrink:0; }
+.info-card-title { font-size:.9rem; font-weight:700; color:#FFFFFF; }
+.info-item { display:flex; align-items:flex-start; gap:.6rem; margin-bottom:.8rem; font-size:.76rem; font-family:var(--font-mono); color:#D8D8EE; line-height:1.75; }
 .info-item::before { content:'▸'; color:var(--gold); flex-shrink:0; margin-top:.1rem; }
-.law-ref { color:var(--neon-blue); font-weight:700; }
+.law-ref { color:#7EE8FF; font-weight:700; }
 
 /* ─── LEADERBOARD ─── */
 .leaderboard { max-width:600px; margin:0 auto; }
@@ -247,7 +270,7 @@ section { padding:5rem 2rem; max-width:1200px; margin:0 auto; }
 }
 .overlay-close:hover { color:var(--gold); }
 .overlay-title { font-size:1.5rem; font-weight:900; margin-bottom:.5rem; }
-.overlay-sub { font-family:var(--font-mono); font-size:.75rem; color:var(--muted); margin-bottom:2rem; }
+.overlay-sub { font-family:var(--font-mono); font-size:.75rem; color:#C8C8E0; margin-bottom:2rem; }
 
 /* ─── QUIZ GAME ─── */
 .quiz-progress-bar { height:4px; background:var(--dark3); margin-bottom:2rem; border-radius:2px; }
@@ -339,13 +362,13 @@ section { padding:5rem 2rem; max-width:1200px; margin:0 auto; }
 .result-emoji { font-size:5rem; margin-bottom:1rem; display:block; }
 .result-score { font-size:3rem; font-weight:900; color:var(--gold); margin-bottom:.5rem; }
 .result-title { font-size:1.5rem; font-weight:900; margin-bottom:1rem; }
-.result-desc { font-family:var(--font-mono); font-size:.8rem; color:var(--muted); line-height:1.8; max-width:400px; margin:0 auto 2rem; }
+.result-desc { font-family:var(--font-mono); font-size:.8rem; color:#C8C8E0; line-height:1.8; max-width:400px; margin:0 auto 2rem; }
 .result-actions { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
 
 /* ─── CALC ─── */
 .calc-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
 .calc-input-group { margin-bottom:1.5rem; }
-.calc-label { font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; font-family:var(--font-mono); margin-bottom:.5rem; display:block; }
+.calc-label { font-size:.7rem; color:#C8C8E0; text-transform:uppercase; letter-spacing:.1em; font-family:var(--font-mono); margin-bottom:.5rem; display:block; }
 .calc-select, .calc-input {
   width:100%; padding:.8rem 1rem; background:var(--dark3); border:1px solid var(--border);
   color:var(--text); font-family:var(--font-mono); font-size:.8rem;
@@ -369,8 +392,8 @@ section { padding:5rem 2rem; max-width:1200px; margin:0 auto; }
   border:2px solid var(--dark); box-shadow:0 0 12px rgba(255,215,0,0.6);
 }
 .timeline-time { font-size:.65rem; color:var(--gold); font-family:var(--font-mono); margin-bottom:.3rem; }
-.timeline-title { font-size:.85rem; font-weight:700; margin-bottom:.3rem; }
-.timeline-desc { font-size:.7rem; color:var(--muted); font-family:var(--font-mono); line-height:1.6; }
+.timeline-title { font-size:.9rem; font-weight:700; margin-bottom:.4rem; color:#FFFFFF; }
+.timeline-desc { font-size:.73rem; color:#D8D8EE; font-family:var(--font-mono); line-height:1.7; }
 
 /* ─── FOOTER ─── */
 footer {
@@ -461,6 +484,18 @@ footer a { color:var(--gold); text-decoration:none; }
     <a href="#leaders">Рейтинг</a>
   </nav>
   <div class="score-bar">
+    <div class="color-switcher">
+      <span class="color-switcher-label">Колір</span>
+      <div class="color-dots">
+        <div class="color-dot active" style="background:#FFD700" onclick="setLogoColor('#FFD700', this)" title="Золотий"></div>
+        <div class="color-dot" style="background:#00FF88" onclick="setLogoColor('#00FF88', this)" title="Зелений"></div>
+        <div class="color-dot" style="background:#00C3FF" onclick="setLogoColor('#00C3FF', this)" title="Блакитний"></div>
+        <div class="color-dot" style="background:#FF6BFF" onclick="setLogoColor('#FF6BFF', this)" title="Рожевий"></div>
+        <div class="color-dot" style="background:#FF8C00" onclick="setLogoColor('#FF8C00', this)" title="Помаранчевий"></div>
+        <div class="color-dot" style="background:#FFFFFF" onclick="setLogoColor('#FFFFFF', this)" title="Білий"></div>
+      </div>
+    </div>
+    <span style="color:var(--muted);font-size:.8rem">|</span>
     <span>⭐ XP:</span>
     <span class="score-val" id="total-xp">0</span>
   </div>
@@ -624,24 +659,24 @@ footer a { color:var(--gold); text-decoration:none; }
     <div class="info-grid">
       <div class="info-card">
         <div class="info-card-header"><div class="info-icon">🤝</div><div class="info-card-title">Господарський договір</div></div>
-        <div class="info-item"><span class="law-ref">ГКУ ст. 180-188</span> — основні вимоги</div>
-        <div class="info-item">Обов'язкові умови: предмет, ціна, строк виконання</div>
-        <div class="info-item">Укладається у письмовій формі — підписи сторін або ЕЦП</div>
-        <div class="info-item">Переддоговірні спори вирішуються у господарському суді протягом 20 днів</div>
-        <div class="info-item">Зміна/розірвання — за згодою сторін або в судовому порядку</div>
+        <div class="info-item"><span class="law-ref">ЦКУ ст. 638-639</span> — укладення та форма договору</div>
+        <div class="info-item">Істотні умови: предмет, а також умови, що визначені законом або погоджені сторонами</div>
+        <div class="info-item">Письмова форма — підписи сторін або кваліфікований ЕЦП (<span class="law-ref">ЦКУ ст. 639</span>)</div>
+        <div class="info-item">Переддоговірні спори — вирішення переддоговірних розбіжностей (<span class="law-ref">ЦКУ ст. 649</span>)</div>
+        <div class="info-item">Зміна/розірвання — за згодою сторін або судом (<span class="law-ref">ЦКУ ст. 651</span>)</div>
       </div>
       <div class="info-card">
         <div class="info-card-header"><div class="info-icon">⚠️</div><div class="info-card-title">Відповідальність</div></div>
-        <div class="info-item"><span class="law-ref">ГКУ ст. 216-229</span> — господарські санкції</div>
-        <div class="info-item">Штрафні санкції: штраф (фіксований), пеня (% від суми боргу)</div>
-        <div class="info-item">Відшкодування збитків — реальний збиток + упущена вигода</div>
-        <div class="info-item">Строк позовної давності — <b>3 роки</b> (загальний)</div>
-        <div class="info-item">Форс-мажор звільняє від відповідальності — <span class="law-ref">ГКУ ст. 218</span></div>
+        <div class="info-item"><span class="law-ref">ЦКУ ст. 549, 611, 623-624</span> — неустойка, відповідальність, збитки</div>
+        <div class="info-item">Штраф — фіксований %, пеня — % від суми за кожен день прострочення (<span class="law-ref">ЦКУ ст. 549</span>)</div>
+        <div class="info-item">Відшкодування збитків — реальний збиток + упущена вигода (<span class="law-ref">ЦКУ ст. 623</span>)</div>
+        <div class="info-item">Строк позовної давності — <b>3 роки</b> (загальний) (<span class="law-ref">ЦКУ ст. 257</span>)</div>
+        <div class="info-item">Форс-мажор звільняє від відповідальності — <span class="law-ref">ЦКУ ст. 617</span></div>
       </div>
       <div class="info-card">
         <div class="info-card-header"><div class="info-icon">📦</div><div class="info-card-title">Поставка та підряд</div></div>
-        <div class="info-item">Договір поставки — <span class="law-ref">ГКУ ст. 265</span>, товари для підприємницьких цілей</div>
-        <div class="info-item">Господарський підряд — <span class="law-ref">ГКУ ст. 317</span></div>
+        <div class="info-item">Договір поставки — <span class="law-ref">ЦКУ ст. 712</span>, товари для підприємницьких цілей</div>
+        <div class="info-item">Підряд (загальний) — <span class="law-ref">ЦКУ ст. 837</span>; будівельний підряд — <span class="law-ref">ЦКУ ст. 875</span></div>
         <div class="info-item">Гарантійний строк для підрядних робіт — мінімум 1 рік</div>
         <div class="info-item">Акт виконаних робіт — обов'язковий документ для оплати</div>
       </div>
@@ -815,7 +850,7 @@ footer a { color:var(--gold); text-decoration:none; }
 <footer>
   <div style="margin-bottom:1rem;font-size:1.2rem">⚖️ Підприємець UA</div>
   <p>Освітній проект з господарського права України</p>
-  <p style="margin-top:.5rem">Нормативна база: <a href="#">ГКУ</a> · <a href="#">ПКУ</a> · <a href="#">ЦКУ</a> · <a href="#">ГПК</a> · <a href="#">КУзПБ</a></p>
+  <p style="margin-top:.5rem">Нормативна база: <a href="https://zakon.rada.gov.ua/laws/show/435-15#Text" target="_blank">ЦКУ</a> · <a href="#">ПКУ</a> · <a href="#">ГПК</a> · <a href="#">КУзПБ</a></p>
   <p style="margin-top:1rem;font-size:.6rem;opacity:.5">* Інформація носить виключно освітній характер і не є юридичною консультацією</p>
 </footer>
 
@@ -996,6 +1031,28 @@ function addXP(pts, label){
 }
 
 // ══════════════════════════════════════════
+// COLOR SWITCHER
+// ══════════════════════════════════════════
+function setLogoColor(color, dotEl) {
+  // Хедер логотип
+  const logo = document.querySelector('.logo');
+  logo.style.color = color;
+  logo.style.webkitTextFillColor = color;
+  logo.querySelectorAll('span').forEach(s => {
+    s.style.color = color;
+    s.style.webkitTextFillColor = color;
+  });
+  // Hero заголовок ПІДПРИЄМЕЦЬ + UA
+  const line1 = document.querySelector('.hero-title .line1');
+  const line2 = document.querySelector('.hero-title .line2');
+  if (line1) { line1.style.color = color; line1.style.webkitTextFillColor = color; }
+  if (line2) { line2.style.color = color; line2.style.webkitTextFillColor = color; }
+  // Активна крапка
+  document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+  if (dotEl) dotEl.classList.add('active');
+}
+
+// ══════════════════════════════════════════
 // TOAST & ACHIEVEMENT
 // ══════════════════════════════════════════
 function showToast(title, body){
@@ -1048,20 +1105,20 @@ function switchTab(id){
 // ══════════════════════════════════════════
 const quizData = [
   {q:"Який строк реєстрації ФОП відповідно до чинного законодавства?", a:["7 робочих днів","1 робочий день","3 дні","30 днів"], correct:1, explain:"За ЗУ 'Про державну реєстрацію юридичних осіб...' реєстрація ФОП здійснюється протягом 1 робочого дня безкоштовно.", law:"ЗУ 'Про держреєстрацію' ст. 26"},
-  {q:"Які обов'язкові умови господарського договору?", a:["Тільки ціна та строк","Предмет, ціна, строк виконання","Підписи та печатки сторін","Банківські реквізити сторін"], correct:1, explain:"Згідно зі ст. 180 ГКУ істотними умовами господарського договору є предмет, ціна та строк дії договору.", law:"ГКУ ст. 180"},
+  {q:"Які істотні умови цивільного договору?", a:["Тільки ціна та строк","Предмет, а також умови визначені законом або погоджені сторонами","Підписи та печатки сторін","Банківські реквізити сторін"], correct:1, explain:"Згідно зі ст. 638 ЦКУ договір є укладеним, якщо сторони погодили всі істотні умови — предмет та умови, що визначені законом або є необхідними для цього виду договору.", law:"ЦКУ ст. 638"},
   {q:"Яка максимальна ставка єдиного податку для 3-ї групи ФОП без ПДВ?", a:["3%","5%","10%","18%"], correct:1, explain:"Платники 3-ї групи сплачують 3% (якщо є платником ПДВ) або 5% (якщо не є платником ПДВ) від доходу.", law:"ПКУ ст. 293"},
   {q:"Яка відповідальність передбачена за хабарництво (ст. 368 ККУ) у великому розмірі?", a:["Штраф","До 3 років","До 12 років позбавлення волі","Громадські роботи"], correct:2, explain:"За одержання хабара у великому розмірі передбачено позбавлення волі на строк від 8 до 12 років з конфіскацією майна.", law:"ККУ ст. 368"},
   {q:"Хто є вищим органом управління ТОВ?", a:["Директор","Наглядова рада","Загальні збори учасників","Правління"], correct:2, explain:"Відповідно до ст. 32 ЗУ 'Про ТОВ та ТДВ' вищим органом товариства є загальні збори його учасників.", law:"ЗУ 'Про ТОВ' ст. 32"},
   {q:"Який загальний строк позовної давності в господарських відносинах?", a:["1 рік","2 роки","3 роки","5 років"], correct:2, explain:"Загальна позовна давність встановлена тривалістю у три роки відповідно до ст. 257 ЦКУ, що застосовується і в господарських відносинах.", law:"ЦКУ ст. 257"},
   {q:"Яка ставка ЄСВ для ФОП на спрощеній системі?", a:["10%","18%","22%","44%"], correct:2, explain:"Єдиний соціальний внесок для ФОП встановлений у розмірі 22% від мінімальної заробітної плати щомісяця, незалежно від отриманого доходу.", law:"ЗУ 'Про ЄСВ' ст. 7"},
   {q:"Який орган здійснює розгляд господарських спорів між підприємцями?", a:["Суд загальної юрисдикції","Господарський суд","Адміністративний суд","Третейський суд"], correct:1, explain:"Господарські суди розглядають справи у спорах між юридичними особами, ФОП та органами державної влади у сфері господарювання.", law:"ГПК ст. 12"},
-  {q:"Що таке форс-мажор у господарських відносинах?", a:["Штрафна санкція","Обставини непереборної сили, що звільняють від відповідальності","Вид страхування","Банківська гарантія"], correct:1, explain:"Форс-мажор (ст. 218 ГКУ) — обставини непереборної сили, за яких сторона звільняється від відповідальності за невиконання зобов'язань.", law:"ГКУ ст. 218"},
+  {q:"Що таке форс-мажор у цивільних відносинах?", a:["Штрафна санкція","Обставини непереборної сили, що звільняють від відповідальності","Вид страхування","Банківська гарантія"], correct:1, explain:"Форс-мажор (ст. 617 ЦКУ) — обставини непереборної сили, за яких особа, що порушила зобов'язання, звільняється від відповідальності, якщо доведе, що порушення сталося внаслідок цих обставин.", law:"ЦКУ ст. 617"},
   {q:"Скільки найманих працівників може мати ФОП 2-ї групи?", a:["Без обмежень","Не більше 5","Не більше 10","Не більше 20"], correct:2, explain:"ФОП 2-ї групи може одночасно використовувати працю найманих осіб, кількість яких не перевищує 10 осіб.", law:"ПКУ ст. 291"},
   {q:"Що перевіряє НАБУ?", a:["Податкові декларації бізнесу","Корупційні злочини держслужбовців","Порушення трудового законодавства","Митні правопорушення"], correct:1, explain:"НАБУ — Національне антикорупційне бюро — розслідує корупційні злочини осіб, уповноважених на виконання функцій держави.", law:"ЗУ 'Про НАБУ' ст. 1"},
   {q:"Яка ставка ПДВ є основною в Україні?", a:["7%","10%","18%","20%"], correct:3, explain:"Основна ставка ПДВ в Україні становить 20% від бази оподаткування. Знижені ставки: 7% (медикаменти, книги), 0% (експорт).", law:"ПКУ ст. 193"},
   {q:"Що є підставою для ліцензування діяльності?", a:["Бажання підприємця","Рішення ради директорів","Наявність у переліку ЗУ 'Про ліцензування'","Реєстрація ТОВ"], correct:2, explain:"Ліцензуванню підлягають виключно ті види діяльності, що прямо визначені у ЗУ 'Про ліцензування видів господарської діяльності' 2015 року.", law:"ЗУ 'Про ліцензування' ст. 7"},
   {q:"Яка мінімальна сума боргу для відкриття справи про банкрутство?", a:["Будь-яка сума","100 МЗП","300 МЗП","1000 МЗП"], correct:2, explain:"Справа про банкрутство може бути відкрита, якщо безспірні вимоги кредиторів сукупно становлять не менше 300 мінімальних заробітних плат.", law:"КУзПБ ст. 34"},
-  {q:"Що таке господарська пеня?", a:["Фіксований штраф за порушення","Щоденна відсоткова санкція за прострочення","Форма неустойки у % від вартості договору разово","Процент від збитків держави"], correct:1, explain:"Пеня — це вид штрафних санкцій, що нараховується у відсотковому відношенні до суми несвоєчасно виконаного зобов'язання за кожен день прострочення.", law:"ГКУ ст. 230-232"},
+  {q:"Що таке пеня у цивільному праві?", a:["Фіксований штраф за порушення","Щоденна відсоткова санкція за прострочення","Форма неустойки у % від вартості договору разово","Процент від збитків держави"], correct:1, explain:"Пеня — це вид неустойки, що обчислюється у відсотковому відношенні до суми несвоєчасно виконаного грошового зобов'язання за кожен день прострочення виконання.", law:"ЦКУ ст. 549"},
 ];
 
 let quizState = { current:0, score:0, hints:{5050:true,law:true,skip:true}, answered:false };
@@ -1526,7 +1583,7 @@ function checkContract(){
   document.getElementById('contract-result').innerHTML=`
     <div style="padding:1rem;background:${correct>=8?'rgba(0,255,136,0.1)':'rgba(255,215,0,0.1)'};border:1px solid ${correct>=8?'var(--success)':'var(--gold)'};font-family:var(--font-mono);font-size:.8rem">
       ${correct>=8?'🏆':'⚠️'} Правильно розміщено: <b style="color:var(--gold)">${correct}/10</b> пунктів<br>
-      <span style="color:var(--muted);font-size:.7rem">Пам'ятай: ГКУ ст. 180 — предмет, ціна, строк — обов'язкові умови договору!</span>
+      <span style="color:var(--muted);font-size:.7rem">Пам'ятай: ЦКУ ст. 638 — предмет та всі узгоджені умови — підстава укладення договору!</span>
       ${correct>=8?'<br><span style="color:var(--success)">Чудовий договір! Твій бізнес захищений ✓</span>':''}
     </div>`;
   if(correct>=8) showAchievement('📝','Договірний майстер!','Склав бездоганний контракт!');
